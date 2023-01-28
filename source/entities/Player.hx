@@ -24,20 +24,29 @@ class Player extends MiniEntity
     public static inline var MAX_RUN_SPEED = 210;
     public static inline var MAX_AIR_SPEED = 200;
     public static inline var GRAVITY = 800;
-    public static inline var JUMP_POWER = 310;
-    public static inline var HIGH_JUMP_POWER = 380;
+    public static inline var JUMP_POWER = 380;
+    public static inline var HIGH_JUMP_POWER = 450;
     public static inline var LAUNCHER_JUMP_POWER = 500;
     public static inline var JUMP_CANCEL_POWER = 20;
     public static inline var MAX_FALL_SPEED = 370;
+    public static inline var MAX_RISE_SPEED = 400;
 
     public static inline var SHOT_SPEED = 500;
     public static inline var SHOT_COOLDOWN = 1 / 60 * 5;
+
     public static inline var COYOTE_TIME = 1 / 60 * 5;
+
+    public static inline var JETPACK_POWER = 4000;
+    public static inline var FUEL_USE_RATE = 500 * 2;
+    public static inline var MAX_FUEL_PODS = 3;
+    public static inline var MAX_FUEL = 200;
 
     public static var sfx:Map<String, Sfx> = null;
 
     public var sprite(default, null):Spritemap;
     public var isDead(default, null):Bool;
+    public var fuelPods(default, null):Int;
+    public var fuel(default, null):Float;
     private var velocity:Vector2;
     private var canMove:Bool;
     private var canJump:Bool;
@@ -45,8 +54,9 @@ class Player extends MiniEntity
     private var isCrouching:Bool;
     private var airTime:Float;
     private var inventory:Array<Int>;
-    private var jumpedOffLauncher:Bool;
     private var crouchHitbox:Hitbox;
+    private var releasedJump:Bool;
+    private var isUsingJetpack:Bool;
 
     public function new(x:Float, y:Float) {
         super(x, y);
@@ -69,6 +79,10 @@ class Player extends MiniEntity
         sprite.play("idle");
         var hitbox = new Hitbox(24, 48);
         crouchHitbox = new Hitbox(24, 32, 0, 16);
+        releasedJump = false;
+        isUsingJetpack = false;
+        fuelPods = 3;
+        fuel = MAX_FUEL;
         mask = new Masklist([hitbox, crouchHitbox]);
         sprite.x = -2;
         graphic = sprite;
@@ -84,7 +98,7 @@ class Player extends MiniEntity
         addTween(shotCooldown);
         isCrouching = false;
         airTime = 0;
-        inventory = [ITEM_GUN, ITEM_STORED_JUMP, ITEM_HIGH_JUMP];
+        inventory = [ITEM_GUN];
         //inventory = [];
         if(sfx == null) {
             sfx = [
@@ -94,10 +108,10 @@ class Player extends MiniEntity
                 "run" => new Sfx("audio/run.wav"),
                 "die" => new Sfx("audio/death.ogg"),
                 "save" => new Sfx("audio/save.ogg"),
-                "shoot" => new Sfx("audio/shoot.ogg")
+                "shoot" => new Sfx("audio/shoot.ogg"),
+                "usefuelpod" => new Sfx("audio/usefuelpod.wav")
             ];
         }
-        jumpedOffLauncher = false;
         sprite.flipX = Data.read("flipX", false);
     }
 
@@ -108,15 +122,7 @@ class Player extends MiniEntity
     override public function update() {
         if(!isDead) {
             if(canMove) {
-                if(Input.check("up") && Input.pressed("jump")) {
-                    velocity.y = hasItem(ITEM_HIGH_JUMP) ? -HIGH_JUMP_POWER : -JUMP_POWER;
-                    while(collide("walls", x, y) != null) {
-                        y += 1;
-                    }
-                }
-                if(hasItem(ITEM_GUN)) {
-                    shooting();
-                }
+                shooting();
                 movement();
             }
             animation();
@@ -130,10 +136,11 @@ class Player extends MiniEntity
 
     private function shooting() {
         if(Input.check("action") && !shotCooldown.active) {
-            var spreadAmount = Math.PI / 16;
-            if(isCrouching) {
-                spreadAmount = 0;
-            }
+            //var spreadAmount = Math.PI / 16;
+            var spreadAmount = 0;
+            //if(isCrouching) {
+                //spreadAmount = 0;
+            //}
             var bullet = new Bullet(
                 centerX, centerY + (isCrouching ? 5 : 0),
                 {
@@ -152,7 +159,7 @@ class Player extends MiniEntity
         }
         if(Input.check("action")) {
             if(!sfx["shoot"].playing) {
-                sfx["shoot"].loop();
+                sfx["shoot"].loop(0.25);
             }
         }
         else {
@@ -207,14 +214,6 @@ class Player extends MiniEntity
 
     private function movement() {
         var accel = isOnGround() ? RUN_ACCEL : AIR_ACCEL;
-        if(
-            isOnGround() && (
-                Input.check("left") && velocity.x > 0
-                || Input.check("right") && velocity.x < 0
-            )
-        ) {
-            accel *= RUN_ACCEL_TURN_MULTIPLIER;
-        }
         var decel = isOnGround() ? RUN_DECEL : AIR_DECEL;
 
         if(isOnGround() && Input.check("down") && collide("checkpoint", x, y) == null) {
@@ -238,41 +237,70 @@ class Player extends MiniEntity
                 velocity.x, 0, decel * HXP.elapsed
             );
         }
-        var maxSpeed = isOnGround() ? MAX_RUN_SPEED : MAX_AIR_SPEED;
+        var maxSpeed:Float = isOnGround() ? MAX_RUN_SPEED : MAX_AIR_SPEED;
+        if(isUsingJetpack) {
+            maxSpeed *= 1.5;
+        }
         velocity.x = MathUtil.clamp(velocity.x, -maxSpeed, maxSpeed);
 
+        isUsingJetpack = false;
         if(isOnGround()) {
             canJump = true;
             velocity.y = 0;
             airTime = 0;
-            jumpedOffLauncher = false;
+            fuelPods = MAX_FUEL_PODS;
+            fuel = 0;
         }
         else {
             airTime += HXP.elapsed;
-            if(!hasItem(ITEM_STORED_JUMP) && airTime >= COYOTE_TIME) {
+            if(airTime > COYOTE_TIME) {
                 canJump = false;
             }
-            if(Input.released("jump") && !jumpedOffLauncher) {
+
+            if(Input.check("jump")) {
+                if(releasedJump && Input.pressed("jump")) {
+                    if(fuelPods > 0) {
+                        useFuelPod();
+                    }
+                }
+                if(releasedJump && fuel > 0) {
+                    isUsingJetpack = true;
+                }
+            }
+            else {
+                if(fuelPods < MAX_FUEL_PODS) {
+                    fuel = 0;
+                }
+                releasedJump = true;
+            }
+
+            if(Input.released("jump")) {
                 var jumpCancelPower = JUMP_CANCEL_POWER;
                 velocity.y = Math.max(velocity.y, -jumpCancelPower);
             }
+            if(isUsingJetpack) {
+                velocity.y -= JETPACK_POWER * HXP.elapsed;
+                fuel -= FUEL_USE_RATE * HXP.elapsed;
+                fuel = Math.max(fuel, 0);
+                if(fuel == 0) {
+                    //if(fuelPods > 0) {
+                        //useFuelPod();
+                    //}
+                    //else {
+                        isUsingJetpack = false;
+                    //}
+                }
+            }
             velocity.y += GRAVITY * HXP.elapsed;
-            velocity.y = Math.min(velocity.y, MAX_FALL_SPEED);
+            velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
         }
 
         if(Input.pressed("jump") && canJump) {
-            var jumpPower = hasItem(ITEM_HIGH_JUMP) ? HIGH_JUMP_POWER : JUMP_POWER;
-            if(collide("launcher", x, y + 1) != null) {
-                jumpPower = LAUNCHER_JUMP_POWER;
-                jumpedOffLauncher = true;
-                sfx["superjump"].play();
-            }
-            else {
-                sfx["jump"].play();
-            }
-            velocity.y = -jumpPower;
+            sfx["jump"].play();
+            velocity.y = -JUMP_POWER;
             canJump = false;
             makeDustAtFeet();
+            releasedJump = false;
         }
 
         moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, "walls");
@@ -337,6 +365,12 @@ class Player extends MiniEntity
                 sprite.play("idle" + animationSuffix);
             }
         }
+    }
+
+    private function useFuelPod() {
+        fuelPods -= 1;
+        sfx["usefuelpod"].play(0.2);
+        fuel = MAX_FUEL;
     }
 
     private function sound() {

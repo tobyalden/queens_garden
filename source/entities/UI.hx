@@ -17,11 +17,28 @@ class UI extends MiniEntity {
     private var healthBarLabels:Array<Text>;
     private var retryPrompt:Text;
     private var initialNumberOfBosses:Int;
+    private var fuelPods:Graphiclist;
+    private var fuel:Image;
 
     public function new() {
         super(0, 0);
         layer = -100;
         allSprites = new Graphiclist();
+
+        fuelPods = new Graphiclist([]);
+        for(i in 0...10) {
+            var fuelPod = new Image("graphics/fuelpod.png");
+            fuelPods.add(fuelPod);
+            fuelPod.x = i * (fuelPod.width + 2);
+        }
+        fuelPods.x = 20;
+        fuelPods.y = 20;
+        allSprites.add(fuelPods);
+
+        fuel = new Image("graphics/fuel.png");
+        fuel.x = fuelPods.x;
+        fuel.y = fuelPods.y + cast(fuelPods.get(0), Image).height + 6;
+        allSprites.add(fuel);
 
         healthBars = [];
         healthBarLabels = [];
@@ -65,6 +82,12 @@ class UI extends MiniEntity {
     }
 
     public override function update() {
+        var player = cast(HXP.scene.getInstance("player"), Player);
+        for(i in 0...fuelPods.count) {
+            fuelPods.get(i).visible = i < player.fuelPods;
+        }
+        fuel.scaleX = player.fuel / 100;
+
         var gameScene = cast(HXP.scene, GameScene);
         if(!gameScene.isRetrying) {
             retryPrompt.text = (

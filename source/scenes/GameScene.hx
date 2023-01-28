@@ -36,7 +36,7 @@ class GameScene extends Scene
     public function saveGame(checkpoint:Checkpoint) {
         GameScene.bossCheckpoint = null;
         Data.write("hasSaveData", true);
-        Data.write("currentCheckpoint", new Vector2(checkpoint.x + 2, checkpoint.bottom - 24));
+        Data.write("currentCheckpoint", new Vector2(checkpoint.x + 2, checkpoint.bottom - 48));
         Data.write("flipX", player.sprite.flipX);
         Data.write("totalTime", totalTime);
         Data.write("deathCount", deathCount);
