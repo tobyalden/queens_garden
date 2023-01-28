@@ -48,10 +48,10 @@ class Level extends Entity
                 for(entityIndex in 0...layer.entities.length) {
                     var entity = layer.entities[entityIndex];
                     if(entity.name == "player") {
-                        entities.push(new Player(entity.x - 3, entity.y - 4));
+                        entities.push(new Player(entity.x - 6, entity.y - 8));
                     }
                     else if(entity.name == "checkpoint") {
-                        entities.push(new Checkpoint(entity.x - 3, entity.y - 12));
+                        entities.push(new Checkpoint(entity.x - 6, entity.y - 24));
                     }
                     else if(entity.name == "lock") {
                         entities.push(new Lock(entity.x, entity.y, entity.width, entity.height));

@@ -53,7 +53,7 @@ class Player extends MiniEntity
         name = "player";
         type = "player";
         layer = -10;
-        sprite = new Spritemap("graphics/player.png", 16, 24);
+        sprite = new Spritemap("graphics/player.png", 32, 48);
         sprite.add("idle", [0]);
         sprite.add("run", [1, 2, 3, 2], 8);
         sprite.add("jump", [4]);
@@ -67,8 +67,8 @@ class Player extends MiniEntity
         sprite.add("ride_gun", [14]);
         sprite.add("ride", [15]);
         sprite.play("idle");
-        var hitbox = new Hitbox(12, 24);
-        crouchHitbox = new Hitbox(12, 16, 0, 8);
+        var hitbox = new Hitbox(24, 48);
+        crouchHitbox = new Hitbox(24, 32, 0, 16);
         mask = new Masklist([hitbox, crouchHitbox]);
         sprite.x = -2;
         graphic = sprite;

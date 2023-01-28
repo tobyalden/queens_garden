@@ -16,11 +16,11 @@ class Checkpoint extends MiniEntity
     public function new(x:Float, y:Float) {
         super(x, y);
         type = "checkpoint";
-        sprite = new Spritemap("graphics/checkpoint.png", 16, 32);
+        sprite = new Spritemap("graphics/checkpoint.png", 32, 64);
         sprite.add("idle", [0, 4, 8, 12, 8, 4], 12);
         sprite.add("flash", [1, 5, 9], 18, false);
         sprite.play("idle");
-        setHitbox(16, 32);
+        setHitbox(32, 64);
         graphic = sprite;
         layer = -100;
     }

@@ -8,7 +8,7 @@
   "directoryDepth": 5,
   "layerGridDefaultSize": {"x": 10, "y": 10},
   "levelDefaultSize": {"x": 320, "y": 240},
-  "levelMinSize": {"x": 320, "y": 180},
+  "levelMinSize": {"x": 480, "y": 360},
   "levelMaxSize": {"x": 4096, "y": 4096},
   "levelValues": [],
   "defaultExportMode": ".json",
@@ -39,7 +39,7 @@
       "exportID": "50484463",
       "name": "player",
       "limit": -1,
-      "size": {"x": 10, "y": 20},
+      "size": {"x": 20, "y": 40},
       "origin": {"x": 0, "y": 0},
       "originAnchored": true,
       "shape": {
@@ -75,7 +75,7 @@
       "exportID": "50618230",
       "name": "checkpoint",
       "limit": -1,
-      "size": {"x": 10, "y": 20},
+      "size": {"x": 20, "y": 40},
       "origin": {"x": 0, "y": 0},
       "originAnchored": true,
       "shape": {

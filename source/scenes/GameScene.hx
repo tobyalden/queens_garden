@@ -15,8 +15,8 @@ import openfl.Assets;
 class GameScene extends Scene
 {
     public static inline var SAVE_FILE_NAME = "saveme";
-    public static inline var GAME_WIDTH = 320;
-    public static inline var GAME_HEIGHT = 180;
+    public static inline var GAME_WIDTH = 480;
+    public static inline var GAME_HEIGHT = 360;
 
     public static var totalTime:Float = 0;
     public static var deathCount:Float = 0;
