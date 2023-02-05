@@ -24,7 +24,7 @@ class TestBossTwo extends Boss {
         mask = new Hitbox(50, 50);
 
         spreadShotTimer = new Alarm(SPREAD_SHOT_INTERVAL, function() {
-            spreadShot(4, 8, 150, getAngleTowardsPlayer(), Math.PI / 6);
+            //spreadShot(4, 8, 150, getAngleTowardsPlayer(), Math.PI / 6, 0xE0BBE4);
         }, TweenType.Looping);
         addTween(spreadShotTimer, true);
     }

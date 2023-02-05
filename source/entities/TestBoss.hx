@@ -12,8 +12,8 @@ import scenes.*;
 
 class TestBoss extends Boss {
     public static inline var GRAVITY = 800;
-    public static inline var JUMP_POWER = 500;
-    public static inline var JUMP_VARIANCE = 100;
+    public static inline var JUMP_POWER = 525;
+    public static inline var JUMP_VARIANCE = 50;
     public static inline var MAX_FALL_SPEED = 370;
     public static inline var RUN_SPEED = 150;
     public static inline var RUN_VARIANCE = 150;
@@ -23,6 +23,8 @@ class TestBoss extends Boss {
     private var jumpTimer:Alarm;
     private var willJump:Bool;
     private var wasOnGround:Bool;
+    private var attackOptions:Array<String>;
+    private var attackIndex:Int;
 
     public function new(x:Float, y:Float) {
         super(x, y);
@@ -38,25 +40,55 @@ class TestBoss extends Boss {
         addTween(jumpTimer);
         willJump = false;
         wasOnGround = false;
+        attackOptions = ["jump", "jump", "spray"];
+        HXP.shuffle(attackOptions);
+        attackIndex = 0;
+    }
+
+    private function attack() {
+        var attackOption = attackOptions[attackIndex];
+        if(attackOption == "jump") {
+            jump();
+        }
+        else {
+            spreadShot(
+                7,
+                Math.PI / 27,
+                {
+                    radius: 10,
+                    angle: 0,
+                    speed: 600,
+                    color: 0xB0E3EA,
+                    gravity: GRAVITY,
+                }
+            );
+        }
+        attackIndex += 1;
+        if(attackIndex >= attackOptions.length) {
+            attackIndex = 0;
+            HXP.shuffle(attackOptions);
+        }
     }
 
     override function update() {
         if(isOnGround()) {
             velocity.x = 0;
             if(!wasOnGround) {
-                spreadShot(11, 16, 200, (centerX < getPlayer().centerX ? 1 : -1) * Math.PI / 2, Math.PI * 2 / 11);
-                //shoot({
-                    //radius: 16,
-                    //angle: (centerX < getPlayer().centerX ? 1 : -1) * Math.PI / 2,
-                    //speed: 200,
-                    //shotByPlayer: false,
-                    //collidesWithWalls: false,
-                    //color: 0xFF000
-                //});
+                var numBullets = 13;
+                spreadShot(
+                    numBullets,
+                    Math.PI * 2 / numBullets,
+                    {
+                        radius: 16,
+                        angle: (centerX < getPlayer().centerX ? 1 : -1) * Math.PI / 2,
+                        speed: 200,
+                        color: 0xFEC8D8
+                    }
+                );
             }
         }
         if(willJump && isOnGround()) {
-            jump();
+            attack();
             willJump = false;
         }
         else if(isOnGround() && !jumpTimer.active) {
@@ -77,9 +109,18 @@ class TestBoss extends Boss {
             velocity.x = -(RUN_SPEED + (Random.random * RUN_VARIANCE));
         }
         velocity.y = -(JUMP_POWER + JUMP_VARIANCE * Random.random);
-        for(i in 0...3) {
+        for(i in 0...5) {
             HXP.alarm(0.5 + i * 0.03, function() {
-                spreadShot(4, 8, 150, getAngleTowardsPlayer(), Math.PI / 5);
+                spreadShot(
+                    4,
+                    Math.PI / 5,
+                    {
+                        radius: 8,
+                        angle: getAngleTowardsPlayer(),
+                        speed: 150,
+                        color: 0xACECAE
+                    }
+                );
             }, this);
         }
     }

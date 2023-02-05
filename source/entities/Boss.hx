@@ -66,20 +66,15 @@ class Boss extends MiniEntity {
     }
 
     private function spreadShot(
-        numBullets:Int, bulletRadius:Int, bulletSpeed:Float, angle:Float, spreadAngle:Float
+        numBullets:Int, spreadAngle:Float, bulletOptions:BulletOptions
     ) {
         var iterStart = Std.int(-Math.floor(numBullets / 2));
         var iterEnd = Std.int(Math.ceil(numBullets / 2));
         var angleOffset = numBullets % 2 == 0 ? spreadAngle / 2 : 0;
+        var originalAngle = bulletOptions.angle;
         for(i in iterStart...iterEnd) {
-            shoot({
-                radius: bulletRadius,
-                angle: angle + i * spreadAngle + angleOffset,
-                speed: bulletSpeed,
-                shotByPlayer: false,
-                collidesWithWalls: false,
-                color: 0xffc0cb
-            });
+            bulletOptions.angle = originalAngle + i * spreadAngle + angleOffset;
+            shoot(bulletOptions);
         }
     }
 

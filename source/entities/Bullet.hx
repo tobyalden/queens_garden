@@ -15,8 +15,8 @@ typedef BulletOptions = {
     @:optional var radius:Int;
     var angle:Float;
     var speed:Float;
-    var shotByPlayer:Bool;
-    var collidesWithWalls:Bool;
+    @:optional var shotByPlayer:Bool;
+    @:optional var collidesWithWalls:Bool;
     @:optional var bulletType:String;
     @:optional var callback:Bullet->Void;
     @:optional var callbackDelay:Float;
@@ -34,6 +34,12 @@ class Bullet extends MiniEntity
     public var bulletOptions:BulletOptions;
 
     public function new(x:Float, y:Float, bulletOptions:BulletOptions) {
+        bulletOptions.shotByPlayer = (
+            bulletOptions.shotByPlayer == null ? false : bulletOptions.shotByPlayer
+        );
+        bulletOptions.collidesWithWalls = (
+            bulletOptions.collidesWithWalls == null ? false : bulletOptions.collidesWithWalls
+        );
         if(bulletOptions.shotByPlayer) {
             super(x - bulletOptions.width / 2, y - bulletOptions.height / 2);
         }
@@ -44,7 +50,6 @@ class Bullet extends MiniEntity
         type = bulletOptions.shotByPlayer ? "playerbullet" : "hazard";
         this.angle = bulletOptions.angle - Math.PI / 2;
         this.speed = bulletOptions.speed;
-        //type = "hazard";
         var color = bulletOptions.color == null ? 0xFFFFFF : bulletOptions.color;
         gravity = bulletOptions.gravity == null ? 0 : bulletOptions.gravity;
         if(bulletOptions.shotByPlayer) {

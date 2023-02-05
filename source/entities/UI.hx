@@ -44,7 +44,7 @@ class UI extends MiniEntity {
         healthBarLabels = [];
         for(i in 0...MAX_NUMBER_OF_BOSSES) {
             var healthBar = new Image("graphics/bosshealth.png");
-            healthBar.y = GameScene.GAME_HEIGHT - healthBar.height - 4;
+            healthBar.y = GameScene.GAME_HEIGHT - healthBar.height - 6;
 
             var healthBarLabel = new Text('BOSS #${i}');
             healthBarLabel.y = healthBar.y - 10;
