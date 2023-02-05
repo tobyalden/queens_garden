@@ -28,7 +28,7 @@ class BossTrigger extends MiniEntity
         if(collide("player", x, y) != null) {
             scene.remove(this);
             var gameScene = cast(HXP.scene, GameScene);
-            var bossCheckpoint = new Vector2(x + width / 2 - 6, bottom - 24);
+            var bossCheckpoint = new Vector2(x + width / 2 - 6, bottom - 48);
             for(bossName in bossNames) {
                 gameScene.triggerBoss(bossName, bossCheckpoint);
             }

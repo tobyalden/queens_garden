@@ -38,7 +38,7 @@ class Player extends MiniEntity
 
     public static inline var JETPACK_POWER = 4000;
     public static inline var FUEL_USE_RATE = 500 * 2;
-    public static inline var MAX_FUEL_PODS = 3;
+    public static inline var MAX_FUEL_PODS = 0;
     public static inline var MAX_FUEL = 200;
 
     public static var sfx:Map<String, Sfx> = null;

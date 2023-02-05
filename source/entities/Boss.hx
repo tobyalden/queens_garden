@@ -9,6 +9,7 @@ import haxepunk.tweens.motion.*;
 import haxepunk.tweens.misc.*;
 import haxepunk.utils.*;
 import scenes.*;
+import entities.Bullet;
 
 class Boss extends MiniEntity {
     public var health(default, null):Int;
@@ -32,6 +33,10 @@ class Boss extends MiniEntity {
             ];
         }
         active = false;
+    }
+
+    public function getPlayer() {
+        return cast(scene.getInstance("player"), Player);
     }
 
     public function takeHit() {
@@ -67,17 +72,20 @@ class Boss extends MiniEntity {
         var iterEnd = Std.int(Math.ceil(numBullets / 2));
         var angleOffset = numBullets % 2 == 0 ? spreadAngle / 2 : 0;
         for(i in iterStart...iterEnd) {
-            var bulletOptions = {
+            shoot({
                 radius: bulletRadius,
                 angle: angle + i * spreadAngle + angleOffset,
                 speed: bulletSpeed,
                 shotByPlayer: false,
                 collidesWithWalls: false,
                 color: 0xffc0cb
-            };
-            var bullet = new Bullet(centerX, centerY, bulletOptions);
-            scene.add(bullet);
+            });
         }
+    }
+
+    private function shoot(bulletOptions:BulletOptions) {
+        var bullet = new Bullet(centerX, centerY, bulletOptions);
+        scene.add(bullet);
     }
 
     public override function update() {
