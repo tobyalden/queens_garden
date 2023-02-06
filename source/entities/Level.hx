@@ -71,6 +71,13 @@ class Level extends Entity
                     else if(entity.name == "testBossThree") {
                         entities.push(new TestBossThree(entity.x, entity.y, getPathNodes(entity, entity.nodes)));
                     }
+                    else if(entity.name == "movingPlatform") {
+                        entities.push(new MovingPlatform(
+                            entity.x, entity.y,
+                            entity.width, entity.height,
+                            getPathNodes(entity, entity.nodes)
+                        ));
+                    }
                     else if(entity.name == "spikeCeiling") {
                         entities.push(new Spike(entity.x, entity.y, Spike.CEILING, entity.width));
                     }

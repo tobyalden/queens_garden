@@ -80,6 +80,23 @@
           "originX": 0,
           "originY": 0,
           "values": {"bossNames": "testboss"}
+        },
+        {
+          "name": "movingPlatform",
+          "id": 6,
+          "_eid": "65078226",
+          "x": 230,
+          "y": 270,
+          "width": 70,
+          "height": 20,
+          "originX": 0,
+          "originY": 0,
+          "nodes": [
+            {"x": 120, "y": 270},
+            {"x": 120, "y": 210},
+            {"x": 230, "y": 210},
+            {"x": 230, "y": 270}
+          ]
         }
       ]
     }
