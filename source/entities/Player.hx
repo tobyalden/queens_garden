@@ -195,6 +195,11 @@ class Player extends MiniEntity
                 die();
             }
         }
+        for(solid in ["walls", "platform"]) {
+            if(collide(solid, x, y) != null) {
+                die();
+            }
+        }
     }
 
     private function stopSounds() {
@@ -303,12 +308,17 @@ class Player extends MiniEntity
             releasedJump = false;
         }
 
-        moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, "walls");
+        moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls", "platform"]);
     }
 
     private function makeDustAtFeet() {
         var dust = new Dust(centerX - 5, bottom - 4);
-        scene.add(dust);
+        var platform = collide("platform", x, y + 1);
+        if(platform != null) {
+            cast(platform, MovingPlatform).attached.push(dust);
+            trace('attaching dust');
+        }
+        HXP.scene.add(dust);
     }
 
     override public function moveCollideX(_:Entity) {

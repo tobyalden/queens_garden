@@ -8,16 +8,18 @@ import haxepunk.math.*;
 
 class MiniEntity extends Entity
 {
+    public static var solids = ["walls", "platform"];
+
     public function new(x:Float, y:Float) {
         super(x, y);
     }
 
     private function isOnGround() {
-        return collide("walls", x, y + 1) != null;
+        return collideAny(solids, x, y + 1) != null;
     }
 
     private function isOnCeiling() {
-        return collide("walls", x, y - 1) != null;
+        return collideAny(solids, x, y - 1) != null;
     }
 
     private function isOnWall() {
@@ -25,11 +27,21 @@ class MiniEntity extends Entity
     }
 
     private function isOnRightWall() {
-        return collide("walls", x + 1, y) != null;
+        return collideAny(solids, x + 1, y) != null;
     }
 
     private function isOnLeftWall() {
-        return collide("walls", x - 1, y) != null;
+        return collideAny(solids, x - 1, y) != null;
+    }
+
+    private function collideAny(types:Array<String>, virtualX:Float, virtualY:Float) {
+        for(collideType in types) {
+            var collided = collide(collideType, virtualX, virtualY);
+            if(collided != null) {
+                return collided;
+            }
+        }
+        return null;
     }
 
     public function getAngleTowardsPlayer() {
