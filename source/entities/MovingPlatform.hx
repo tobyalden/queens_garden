@@ -37,30 +37,14 @@ class MovingPlatform extends MiniEntity
         var oldPosition = new Vector2(x, y);
         var player = cast(scene.getInstance("player"), Player);
 
-        // Vertical movement
-        var carryPlayer = (
-            player.collideWith(this, player.x, player.y + 1) != null
-            && player.collide("walls", player.x, player.y + 1) == null
-        );
-        moveTo(x, path.y);
-        if(player.collideWith(this, player.x, player.y) != null && player.y < y) {
-            carryPlayer = true;
-        }
-        if(carryPlayer) {
-            player.moveTo(player.x, top - player.height);
-        }
-        else if(player.collideWith(this, player.x, player.y) != null) {
-            player.moveTo(player.x, bottom);
-        }
-
         // Horizontal movement
-        carryPlayer = (
+        var carryPlayer = (
             player.collideWith(this, player.x, player.y + 1) != null
             && player.collide("walls", player.x, player.y + 1) == null
         );
         moveTo(path.x, y);
         if(carryPlayer) {
-            player.moveBy(path.x - oldPosition.x, 0, "walls");
+            player.moveBy(path.x - oldPosition.x, 0, ["walls", "platform"]);
         }
         if(collideWith(player, x, y) != null) {
             if(centerX < player.centerX) {
@@ -69,6 +53,22 @@ class MovingPlatform extends MiniEntity
             else if(centerX > player.centerX) {
                 player.moveTo(left - player.width, player.y);
             }
+        }
+
+        // Vertical movement
+        carryPlayer = (
+            player.collideWith(this, player.x, player.y + 1) != null
+            && player.collide("walls", player.x, player.y + 1) == null
+        );
+        moveTo(x, path.y);
+        if(player.collideWith(this, player.x, player.y) != null && player.y < y) {
+            carryPlayer = true;
+        }
+        if(carryPlayer) {
+            player.moveTo(player.x, top - player.height, ["walls", "platform"]);
+        }
+        else if(player.collideWith(this, player.x, player.y) != null) {
+            player.moveTo(player.x, bottom);
         }
 
         for(e in attached) {
