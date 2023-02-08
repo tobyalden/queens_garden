@@ -15,16 +15,22 @@ class TestBoss extends Boss {
     public static inline var JUMP_POWER = 525;
     public static inline var JUMP_VARIANCE = 50;
     public static inline var MAX_FALL_SPEED = 370;
-    public static inline var RUN_SPEED = 150;
-    public static inline var RUN_VARIANCE = 150;
-    public static inline var JUMP_PAUSE = 0.75;
+    public static inline var JUMP_HORIZONTAL_SPEED = 150;
+    public static inline var JUMP_HORIZONTAL_SPEED_VARIANCE = 150;
+    public static inline var ATTACK_PAUSE = 0.75;
+    public static inline var DASH_SPEED = 800;
+    public static inline var DASH_TIME = 0.75;
+    public static inline var PREDASH_TIME = 0.25;
 
     private var velocity:Vector2;
-    private var jumpTimer:Alarm;
-    private var willJump:Bool;
+    private var attackTimer:Alarm;
+    private var willAttack:Bool;
     private var wasOnGround:Bool;
     private var attackOptions:Array<String>;
     private var attackIndex:Int;
+    private var dashVelocity:Float;
+    private var dashTimer:VarTween;
+    private var preDashTimer:Alarm;
 
     public function new(x:Float, y:Float) {
         super(x, y);
@@ -34,15 +40,28 @@ class TestBoss extends Boss {
         graphic = new Image("graphics/testboss.png");
         mask = new Hitbox(50, 50);
         velocity = new Vector2();
-        jumpTimer = new Alarm(JUMP_PAUSE, function() {
-            willJump = true;
+        attackTimer = new Alarm(ATTACK_PAUSE, function() {
+            willAttack = true;
         });
-        addTween(jumpTimer);
-        willJump = false;
+        addTween(attackTimer);
+        willAttack = false;
         wasOnGround = false;
-        attackOptions = ["jump", "jump", "spray"];
+        attackOptions = ["jump", "jump", "spray", "dash"];
+        //attackOptions = ["dash"];
         HXP.shuffle(attackOptions);
         attackIndex = 0;
+        dashVelocity = 0;
+        dashTimer = new VarTween();
+        addTween(dashTimer);
+        preDashTimer = new Alarm(PREDASH_TIME, function() {
+            velocity.x = dashVelocity;
+            dashTimer.tween(velocity, "x", 0, DASH_TIME);
+            graphic.color = 0xFFFFFF;
+        });
+        preDashTimer.onStart.bind(function() {
+            graphic.color = 0xFF0000;
+        });
+        addTween(preDashTimer);
     }
 
     private function attack() {
@@ -50,7 +69,11 @@ class TestBoss extends Boss {
         if(attackOption == "jump") {
             jump();
         }
-        else {
+        else if(attackOption == "dash") {
+            preDashTimer.start();
+            dashVelocity = DASH_SPEED * (centerX < getPlayer().centerX ? 1 : -1);
+        }
+        else { // "spray"
             spreadShot(
                 7,
                 Math.PI / 27,
@@ -72,7 +95,9 @@ class TestBoss extends Boss {
 
     override function update() {
         if(isOnGround()) {
-            velocity.x = 0;
+            if(!dashTimer.active) {
+                velocity.x = 0;
+            }
             if(!wasOnGround) {
                 var numBullets = 13;
                 spreadShot(
@@ -87,12 +112,12 @@ class TestBoss extends Boss {
                 );
             }
         }
-        if(willJump && isOnGround()) {
+        if(willAttack && isOnGround()) {
             attack();
-            willJump = false;
+            willAttack = false;
         }
-        else if(isOnGround() && !jumpTimer.active) {
-            jumpTimer.start();
+        else if(isOnGround() && !attackTimer.active && !dashTimer.active && !preDashTimer.active) {
+            attackTimer.start();
         }
         velocity.y += GRAVITY * HXP.elapsed;
         velocity.y = Math.min(velocity.y, MAX_FALL_SPEED);
@@ -103,10 +128,10 @@ class TestBoss extends Boss {
 
     private function jump() {
         if(centerX < getPlayer().centerX) {
-            velocity.x = RUN_SPEED + (Random.random * RUN_VARIANCE);
+            velocity.x = JUMP_HORIZONTAL_SPEED + (Random.random * JUMP_HORIZONTAL_SPEED_VARIANCE);
         }
         else {
-            velocity.x = -(RUN_SPEED + (Random.random * RUN_VARIANCE));
+            velocity.x = -(JUMP_HORIZONTAL_SPEED + (Random.random * JUMP_HORIZONTAL_SPEED_VARIANCE));
         }
         velocity.y = -(JUMP_POWER + JUMP_VARIANCE * Random.random);
         for(i in 0...5) {
