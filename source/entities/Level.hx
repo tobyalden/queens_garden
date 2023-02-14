@@ -78,6 +78,9 @@ class Level extends Entity
                             getPathNodes(entity, entity.nodes)
                         ));
                     }
+                    else if(entity.name == "oneWayPlatform") {
+                        entities.push(new OneWayPlatform(entity.x, entity.y, entity.width));
+                    }
                     else if(entity.name == "spikeCeiling") {
                         entities.push(new Spike(entity.x, entity.y, Spike.CEILING, entity.width));
                     }

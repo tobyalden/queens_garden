@@ -141,13 +141,19 @@ class Player extends MiniEntity
             //if(isCrouching) {
                 //spreadAmount = 0;
             //}
+            var shotAngle = (sprite.flipX ? -1 : 1) * Math.PI / 2 + (Math.random() - 0.5) * spreadAmount;
+            if(Input.check("up")) {
+                shotAngle = 0;
+            }
+            else if(!isOnGround() && Input.check("down")) {
+                shotAngle = Math.PI;
+            }
             var bullet = new Bullet(
                 centerX, centerY + (isCrouching ? 5 : 0),
                 {
                     width: 8,
                     height: 3,
-                    angle: (sprite.flipX ? -1 : 1) * Math.PI / 2
-                        + (Math.random() - 0.5) * spreadAmount,
+                    angle: shotAngle,
                     speed: SHOT_SPEED,
                     shotByPlayer: true,
                     collidesWithWalls: true
@@ -195,7 +201,7 @@ class Player extends MiniEntity
                 die();
             }
         }
-        for(solid in ["walls", "platform"]) {
+        for(solid in MiniEntity.alwaysSolids) {
             if(collide(solid, x, y) != null) {
                 die();
             }
@@ -300,7 +306,14 @@ class Player extends MiniEntity
             velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
         }
 
-        if(Input.pressed("jump") && canJump) {
+        if(
+            Input.pressed("jump") && Input.check("down")
+            && collide("oneway", x, y + 1) != null
+            && collideAny(MiniEntity.alwaysSolids, x, y + 1) == null
+        ) {
+            y += 1;
+        }
+        else if(Input.pressed("jump") && canJump) {
             sfx["jump"].play();
             velocity.y = -JUMP_POWER;
             canJump = false;
@@ -308,7 +321,7 @@ class Player extends MiniEntity
             releasedJump = false;
         }
 
-        moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls", "platform"]);
+        moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, MiniEntity.solids);
     }
 
     private function makeDustAtFeet() {

@@ -35,10 +35,6 @@ class Boss extends MiniEntity {
         active = false;
     }
 
-    public function getPlayer() {
-        return cast(scene.getInstance("player"), Player);
-    }
-
     public function takeHit() {
         if(!active) {
             return;

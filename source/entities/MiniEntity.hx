@@ -8,18 +8,23 @@ import haxepunk.math.*;
 
 class MiniEntity extends Entity
 {
-    public static var solids = ["walls", "platform"];
+    public static var solids = ["walls", "platform", "oneway"];
+    public static var alwaysSolids = ["walls", "platform"];
 
     public function new(x:Float, y:Float) {
         super(x, y);
     }
 
+    public function getPlayer() {
+        return cast(HXP.scene.getInstance("player"), Player);
+    }
+
     private function isOnGround() {
-        return collideAny(solids, x, y + 1) != null;
+        return collideAny(MiniEntity.solids, x, y + 1) != null;
     }
 
     private function isOnCeiling() {
-        return collideAny(solids, x, y - 1) != null;
+        return collideAny(MiniEntity.solids, x, y - 1) != null;
     }
 
     private function isOnWall() {
@@ -27,11 +32,11 @@ class MiniEntity extends Entity
     }
 
     private function isOnRightWall() {
-        return collideAny(solids, x + 1, y) != null;
+        return collideAny(MiniEntity.solids, x + 1, y) != null;
     }
 
     private function isOnLeftWall() {
-        return collideAny(solids, x - 1, y) != null;
+        return collideAny(MiniEntity.solids, x - 1, y) != null;
     }
 
     private function collideAny(types:Array<String>, virtualX:Float, virtualY:Float) {
