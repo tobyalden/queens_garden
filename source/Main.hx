@@ -51,6 +51,7 @@ class Main extends Engine
         gamepad.defineAxis("left", XboxGamepad.LEFT_ANALOGUE_X, -0.5, -1);
         gamepad.defineAxis("right", XboxGamepad.LEFT_ANALOGUE_X, 0.5, 1);
         gamepad.defineButton("jump", [XboxGamepad.A_BUTTON]);
+        gamepad.defineButton("action", [XboxGamepad.X_BUTTON]);
     }
 
     override public function update() {

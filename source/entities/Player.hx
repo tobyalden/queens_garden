@@ -38,8 +38,9 @@ class Player extends MiniEntity
 
     public static inline var JETPACK_POWER = 4000;
     public static inline var FUEL_USE_RATE = 500 * 2;
-    public static inline var MAX_FUEL_PODS = 0;
-    public static inline var MAX_FUEL = 200;
+    public static inline var MAX_FUEL_PODS = 1;
+    //public static inline var MAX_FUEL = 200;
+    public static inline var MAX_FUEL = 100;
 
     public static var sfx:Map<String, Sfx> = null;
 
@@ -272,6 +273,9 @@ class Player extends MiniEntity
                 if(releasedJump && Input.pressed("jump")) {
                     if(fuelPods > 0) {
                         useFuelPod();
+                        if(velocity.y > JUMP_CANCEL_POWER) {
+                            velocity.y = JUMP_CANCEL_POWER;
+                        }
                     }
                 }
                 if(releasedJump && fuel > 0) {
@@ -329,7 +333,6 @@ class Player extends MiniEntity
         var platform = collide("platform", x, y + 1);
         if(platform != null) {
             cast(platform, MovingPlatform).attached.push(dust);
-            trace('attaching dust');
         }
         HXP.scene.add(dust);
     }

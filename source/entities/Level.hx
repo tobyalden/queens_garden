@@ -66,7 +66,7 @@ class Level extends Entity
                         entities.push(new TestBoss(entity.x, entity.y));
                     }
                     else if(entity.name == "testBossTwo") {
-                        entities.push(new TestBossTwo(entity.x, entity.y));
+                        entities.push(new TestBossTwo(entity.x, entity.y, getPointNodes(entity, entity.nodes)));
                     }
                     else if(entity.name == "testBossThree") {
                         entities.push(new TestBossThree(entity.x, entity.y, getPathNodes(entity, entity.nodes)));
@@ -101,12 +101,17 @@ class Level extends Entity
         }
     }
 
-    private function getPathNodes(entity:Dynamic, nodes:Dynamic) {
-        var pathNodes = new Array<Vector2>();
-        pathNodes.push(new Vector2(entity.x, entity.y));
+    private function getPointNodes(entity:Dynamic, nodes:Dynamic) {
+        var pointNodes = new Array<Vector2>();
         for(i in 0...entity.nodes.length) {
-            pathNodes.push(new Vector2(entity.nodes[i].x, entity.nodes[i].y));
+            pointNodes.push(new Vector2(entity.nodes[i].x, entity.nodes[i].y));
         }
+        return pointNodes;
+    }
+
+    private function getPathNodes(entity:Dynamic, nodes:Dynamic) {
+        var pathNodes = getPointNodes(entity, nodes);
+        pathNodes.insert(0, new Vector2(entity.x, entity.y));
         pathNodes.push(new Vector2(entity.x, entity.y));
         return pathNodes;
     }

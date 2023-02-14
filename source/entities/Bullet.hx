@@ -92,7 +92,7 @@ class Bullet extends MiniEntity
     override public function update() {
         velocity.y += gravity * HXP.elapsed;
         if(bulletOptions.collidesWithWalls) {
-            moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, "walls");
+            moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, MiniEntity.alwaysSolids);
         }
         else {
             moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed);

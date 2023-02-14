@@ -72,7 +72,7 @@ class GameScene extends Scene
                 player.moveTo(checkpoint.x, checkpoint.y);
             }
             else if(entity.type == "boss" && isBossDefeated(entity.name)) {
-                trace('Boss with name "${entity.name}" already defeated. Skipping...');
+                //trace('Boss with name "${entity.name}" already defeated. Skipping...');
                 continue;
             }
             add(entity);

@@ -79,6 +79,11 @@ class Boss extends MiniEntity {
         scene.add(bullet);
     }
 
+    private function shootFrom(bulletPosition:Vector2, bulletOptions:BulletOptions) {
+        var bullet = new Bullet(bulletPosition.x, bulletPosition.y, bulletOptions);
+        scene.add(bullet);
+    }
+
     public override function update() {
         age += HXP.elapsed;
         if(health <= startingHealth / 4) {
