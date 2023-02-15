@@ -14,6 +14,7 @@ class TestBossTwo extends Boss {
     public static inline var SPREAD_SHOT_INTERVAL = 1.5;
 
     private var pointNodes:Array<Vector2>;
+    private var startPosition:Vector2;
 
     private var mover:MultiVarTween;
     private var attackPause:Alarm;
@@ -26,6 +27,7 @@ class TestBossTwo extends Boss {
     public function new(x:Float, y:Float, pointNodes:Array<Vector2>) {
         super(x, y);
         this.pointNodes = pointNodes;
+        this.startPosition = new Vector2(x, y);
         name = "testbosstwo";
         health = 100;
         startingHealth = health;
@@ -34,7 +36,8 @@ class TestBossTwo extends Boss {
 
         HXP.shuffle(pointNodes);
 
-        attackOptions = ["move", "shoot"];
+        //attackOptions = ["move", "spell", "special"];
+        attackOptions = ["special"];
         HXP.shuffle(attackOptions);
         attackIndex = 0;
 
@@ -54,12 +57,53 @@ class TestBossTwo extends Boss {
         if(attackOption == "move") {
             move();
         }
-        else { // "shoot"
+        else if(attackOption == "spell") {
             spell();
+        }
+        else { // "special"
+            special();
         }
         attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
             HXP.shuffle(attackOptions);
         });
+    }
+
+    private function special() {
+        var travelTime = distanceToPoint(startPosition.x, startPosition.y) / 200;
+        mover.tween(
+            this,
+            {"x": startPosition.x, "y": startPosition.y},
+            travelTime
+        );
+        var numPillars = 5;
+        var pillarWidth = 30;
+        var delayBetweenPillars = 0.4;
+        var fromLeft = getPlayer().centerX > centerX;
+        HXP.alarm(travelTime + 1, function() {
+            HXP.scene.add(new Hurtbox(
+                HXP.scene.camera.x + 10, HXP.scene.camera.y,
+                70, GameScene.GAME_HEIGHT,
+                1, numPillars * delayBetweenPillars + 3
+            ));
+            HXP.scene.add(new Hurtbox(
+                HXP.scene.camera.x + GameScene.GAME_WIDTH - 70 - 10, HXP.scene.camera.y,
+                70, GameScene.GAME_HEIGHT,
+                1, numPillars * delayBetweenPillars + 3
+            ));
+            HXP.alarm(2, function() {
+                for(i in 0...numPillars) {
+                    var delay = fromLeft ? i * delayBetweenPillars : (numPillars - 1) * delayBetweenPillars - i * delayBetweenPillars;
+                    HXP.alarm(delay, function() {
+                        HXP.scene.add(new Hurtbox(
+                            HXP.scene.camera.x + GameScene.GAME_WIDTH / (numPillars + 1) * (i + 1) - pillarWidth / 2, HXP.scene.camera.y,
+                            pillarWidth, GameScene.GAME_HEIGHT,
+                            0.5, 0.5
+                        ));
+                    }, getScene().bossTweener);
+                }
+            }, getScene().bossTweener);
+        }, getScene().bossTweener);
+        attackPause.reset(travelTime + 1 + numPillars * delayBetweenPillars + 1 + 3);
     }
 
     private function spell() {
