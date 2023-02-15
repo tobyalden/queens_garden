@@ -47,7 +47,6 @@ class TestBoss extends Boss {
         willAttack = false;
         wasOnGround = false;
         attackOptions = ["jump", "jump", "spray", "dash"];
-        //attackOptions = ["dash"];
         HXP.shuffle(attackOptions);
         attackIndex = 0;
         dashVelocity = 0;
@@ -86,11 +85,9 @@ class TestBoss extends Boss {
                 }
             );
         }
-        attackIndex += 1;
-        if(attackIndex >= attackOptions.length) {
-            attackIndex = 0;
+        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
             HXP.shuffle(attackOptions);
-        }
+        });
     }
 
     override function update() {
@@ -146,7 +143,7 @@ class TestBoss extends Boss {
                         color: 0xACECAE
                     }
                 );
-            }, this);
+            }, getScene().bossTweener);
         }
     }
 }

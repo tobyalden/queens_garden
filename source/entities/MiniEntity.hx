@@ -5,6 +5,7 @@ import haxepunk.graphics.*;
 import haxepunk.input.*;
 import haxepunk.masks.*;
 import haxepunk.math.*;
+import scenes.*;
 
 class MiniEntity extends Entity
 {
@@ -13,6 +14,10 @@ class MiniEntity extends Entity
 
     public function new(x:Float, y:Float) {
         super(x, y);
+    }
+
+    public function getScene() {
+        return cast(HXP.scene, GameScene);
     }
 
     public function getPlayer() {

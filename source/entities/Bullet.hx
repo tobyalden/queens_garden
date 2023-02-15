@@ -22,6 +22,8 @@ typedef BulletOptions = {
     @:optional var callbackDelay:Float;
     @:optional var color:Int;
     @:optional var gravity:Float;
+    @:optional var accel:Float;
+    @:optional var tracking:Float;
 }
 
 class Bullet extends MiniEntity
@@ -31,6 +33,8 @@ class Bullet extends MiniEntity
     public var angle:Float;
     public var speed:Float;
     public var gravity:Float;
+    public var accel:Float;
+    public var tracking:Float;
     public var bulletOptions:BulletOptions;
 
     public function new(x:Float, y:Float, bulletOptions:BulletOptions) {
@@ -52,6 +56,8 @@ class Bullet extends MiniEntity
         this.speed = bulletOptions.speed;
         var color = bulletOptions.color == null ? 0xFFFFFF : bulletOptions.color;
         gravity = bulletOptions.gravity == null ? 0 : bulletOptions.gravity;
+        accel = bulletOptions.accel == null ? 0 : bulletOptions.accel;
+        tracking = bulletOptions.tracking == null ? 0 : bulletOptions.tracking;
         if(bulletOptions.shotByPlayer) {
             mask = new Hitbox(bulletOptions.width, bulletOptions.height);
             sprite = Image.createRect(width, height, color);
@@ -91,6 +97,14 @@ class Bullet extends MiniEntity
 
     override public function update() {
         velocity.y += gravity * HXP.elapsed;
+        velocity.normalize(velocity.length + accel * HXP.elapsed);
+        if(tracking > 0) {
+            var towardsPlayer = new Vector2(getPlayer().centerX - centerX, getPlayer().centerY - centerY);
+            towardsPlayer.normalize(tracking * HXP.elapsed);
+            var speed = velocity.length;
+            velocity.add(towardsPlayer);
+            velocity.normalize(speed);
+        }
         if(bulletOptions.collidesWithWalls) {
             moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, MiniEntity.alwaysSolids);
         }

@@ -28,6 +28,7 @@ class GameScene extends Scene
 
     public var curtain(default, null):Curtain;
     public var isRetrying(default, null):Bool;
+    public var bossTweener(default, null):Entity;
     private var level:Level;
     private var player:Player;
     private var ui:UI;
@@ -55,6 +56,7 @@ class GameScene extends Scene
         curtain.fadeOut(1);
 
         activeBosses = [];
+        bossTweener = add(new Entity());
 
         ui = add(new UI());
         canRetry = false;
@@ -127,6 +129,7 @@ class GameScene extends Scene
     }
 
     override public function update() {
+        bossTweener.active = isAnyBossActive();
         if(canRetry && !isRetrying) {
             var retry = false;
             if(Input.pressed("jump")) {

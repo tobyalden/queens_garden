@@ -215,6 +215,9 @@ class Player extends MiniEntity
     }
 
     public function die() {
+        if(Key.check(Key.G)) {
+            return;
+        }
         visible = false;
         collidable = false;
         isDead = true;

@@ -127,7 +127,7 @@
           "x": 700,
           "y": 370,
           "width": 30,
-          "height": 280,
+          "height": 300,
           "originX": 0,
           "originY": 0,
           "values": {"bossNames": "testbosstwo"}
@@ -137,14 +137,14 @@
           "id": 11,
           "_eid": "65078226",
           "x": 670,
-          "y": 650,
+          "y": 670,
           "width": 90,
           "height": 20,
           "originX": 0,
           "originY": 0,
           "nodes": [
-            {"x": 790, "y": 650},
-            {"x": 560, "y": 650}
+            {"x": 790, "y": 670},
+            {"x": 560, "y": 670}
           ]
         },
         {

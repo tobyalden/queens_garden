@@ -13,14 +13,15 @@ import scenes.*;
 class TestBossTwo extends Boss {
     public static inline var SPREAD_SHOT_INTERVAL = 1.5;
 
-    private var spreadShotTimer:Alarm;
     private var pointNodes:Array<Vector2>;
 
     private var mover:MultiVarTween;
-    private var movePause:Alarm;
+    private var attackPause:Alarm;
     private var pointIndex:Int;
     private var shotAngle:Float;
     private var shotPosition:Vector2;
+    private var attackOptions:Array<String>;
+    private var attackIndex:Int;
 
     public function new(x:Float, y:Float, pointNodes:Array<Vector2>) {
         super(x, y);
@@ -31,22 +32,46 @@ class TestBossTwo extends Boss {
         graphic = new Image("graphics/testbosstwo.png");
         mask = new Hitbox(50, 50);
 
-        spreadShotTimer = new Alarm(SPREAD_SHOT_INTERVAL, function() {
-            //spreadShot(4, 8, 150, getAngleTowardsPlayer(), Math.PI / 6, 0xE0BBE4);
-        }, TweenType.Looping);
-        addTween(spreadShotTimer, true);
-
         HXP.shuffle(pointNodes);
+
+        attackOptions = ["move", "shoot"];
+        HXP.shuffle(attackOptions);
+        attackIndex = 0;
 
         mover = new MultiVarTween();
         addTween(mover);
-        movePause = new Alarm(0.3, function() {
-            move();
+        attackPause = new Alarm(0.3, function() {
+            attack();
         });
-        addTween(movePause);
+        addTween(attackPause);
         pointIndex = 0;
         shotAngle = 0;
         shotPosition = new Vector2();
+    }
+
+    private function attack() {
+        var attackOption = attackOptions[attackIndex];
+        if(attackOption == "move") {
+            move();
+        }
+        else { // "shoot"
+            spell();
+        }
+        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
+            HXP.shuffle(attackOptions);
+        });
+    }
+
+    private function spell() {
+        shoot({
+            radius: 16,
+            angle: getAngleTowardsPlayer(),
+            speed: 100,
+            color: 0xFFF7AB,
+            accel: 600,
+            tracking: 600 * 2,
+        });
+        attackPause.reset(0.7);
     }
 
     private function move() {
@@ -56,22 +81,20 @@ class TestBossTwo extends Boss {
             this,
             {"x": destination.x, "y": destination.y},
             travelTime
-            //Ease.sineInOut
         );
-        pointIndex = MathUtil.increment(pointIndex, pointNodes.length);
-        if(pointIndex == 0) {
+        pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-        }
+        });
         var travelIncrements = [
-            0.4, 0.425, 0.45, 0.475,
-            0.5, 0.525, 0.55, 0.575,
-            0.6
+            0, 0.025, 0.05, 0.075,
+            0.1, 0.125, 0.15, 0.175,
+            0.2
         ];
         for(i in 0...travelIncrements.length) {
-            HXP.alarm(travelIncrements[i], function() {
+            HXP.alarm(travelTime * 0.4 + travelIncrements[i], function() {
                 if(i == 0) {
                     shotAngle = getAngleTowardsPlayer();
-                    shotPosition = new Vector2(x, y);
+                    shotPosition = new Vector2(centerX, centerY);
                 }
                 shootFrom(
                     shotPosition,
@@ -82,13 +105,13 @@ class TestBossTwo extends Boss {
                         color: 0xACECAE
                     }
                 );
-            }, this);
+            }, getScene().bossTweener);
         }
     }
 
     override function update() {
-        if(!mover.active && !movePause.active) {
-            movePause.start();
+        if(!mover.active && !attackPause.active) {
+            attackPause.reset(0.3);
         }
     }
 }
