@@ -24,6 +24,8 @@ typedef BulletOptions = {
     @:optional var gravity:Float;
     @:optional var accel:Float;
     @:optional var tracking:Float;
+    @:optional var duration:Float;
+    @:optional var isSword:Bool;
 }
 
 class Bullet extends MiniEntity
@@ -35,6 +37,9 @@ class Bullet extends MiniEntity
     public var gravity:Float;
     public var accel:Float;
     public var tracking:Float;
+    public var duration:Float;
+    public var isSword:Bool;
+    // Wait... i should just be checking the bullet options instead of creating redundant variables
     public var bulletOptions:BulletOptions;
 
     public function new(x:Float, y:Float, bulletOptions:BulletOptions) {
@@ -51,13 +56,18 @@ class Bullet extends MiniEntity
             super(x - bulletOptions.radius, y - bulletOptions.radius);
         }
         this.bulletOptions = bulletOptions;
-        type = bulletOptions.shotByPlayer ? "playerbullet" : "hazard";
         this.angle = bulletOptions.angle - Math.PI / 2;
         this.speed = bulletOptions.speed;
         var color = bulletOptions.color == null ? 0xFFFFFF : bulletOptions.color;
         gravity = bulletOptions.gravity == null ? 0 : bulletOptions.gravity;
         accel = bulletOptions.accel == null ? 0 : bulletOptions.accel;
         tracking = bulletOptions.tracking == null ? 0 : bulletOptions.tracking;
+        duration = bulletOptions.duration == null ? 999 : bulletOptions.duration;
+        isSword = bulletOptions.isSword == null ? false : bulletOptions.isSword;
+        type = bulletOptions.shotByPlayer ? "playerbullet" : "hazard";
+        if(isSword) {
+            type = "playersword";
+        }
         if(bulletOptions.shotByPlayer) {
             mask = new Hitbox(bulletOptions.width, bulletOptions.height);
             sprite = Image.createRect(width, height, color);
@@ -96,6 +106,10 @@ class Bullet extends MiniEntity
     }
 
     override public function update() {
+        duration -= HXP.elapsed;
+        if(duration <= 0) {
+            HXP.scene.remove(this);
+        }
         velocity.y += gravity * HXP.elapsed;
         velocity.normalize(velocity.length + accel * HXP.elapsed);
         if(tracking > 0) {
@@ -114,7 +128,7 @@ class Bullet extends MiniEntity
         if(bulletOptions.shotByPlayer) {
             var boss = collide("boss", x, y);
             if(boss != null) {
-                cast(boss, Boss).takeHit();
+                cast(boss, Boss).takeHit(type == "playersword" ? Player.SWORD_DAMAGE : Player.SHOT_DAMAGE);
                 scene.remove(this);
             }
         }

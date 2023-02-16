@@ -23,6 +23,7 @@ class TestBossTwo extends Boss {
     private var shotPosition:Vector2;
     private var attackOptions:Array<String>;
     private var attackIndex:Int;
+    private var hasUsedSpecial:Bool;
 
     public function new(x:Float, y:Float, pointNodes:Array<Vector2>) {
         super(x, y);
@@ -36,8 +37,8 @@ class TestBossTwo extends Boss {
 
         HXP.shuffle(pointNodes);
 
-        //attackOptions = ["move", "spell", "special"];
-        attackOptions = ["special"];
+        attackOptions = ["move", "spell"];
+        //attackOptions = ["special"];
         HXP.shuffle(attackOptions);
         attackIndex = 0;
 
@@ -50,18 +51,20 @@ class TestBossTwo extends Boss {
         pointIndex = 0;
         shotAngle = 0;
         shotPosition = new Vector2();
+        hasUsedSpecial = false;
     }
 
     private function attack() {
         var attackOption = attackOptions[attackIndex];
+        if(health <= startingHealth / 2 && !hasUsedSpecial) {
+            special();
+            hasUsedSpecial = true;
+        }
         if(attackOption == "move") {
             move();
         }
         else if(attackOption == "spell") {
             spell();
-        }
-        else { // "special"
-            special();
         }
         attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
             HXP.shuffle(attackOptions);

@@ -32,7 +32,9 @@ class Player extends MiniEntity
     public static inline var MAX_RISE_SPEED = 400;
 
     public static inline var SHOT_SPEED = 500;
-    public static inline var SHOT_COOLDOWN = 1 / 60 * 5;
+    public static inline var SHOT_COOLDOWN = 1 / 60 * 5 * 2;
+    public static inline var SHOT_DAMAGE = 2;
+    public static inline var SWORD_DAMAGE = 3;
 
     public static inline var COYOTE_TIME = 1 / 60 * 5;
 
@@ -149,29 +151,49 @@ class Player extends MiniEntity
             else if(!isOnGround() && Input.check("down")) {
                 shotAngle = Math.PI;
             }
-            var bullet = new Bullet(
-                centerX, centerY + (isCrouching ? 5 : 0),
+            var sword = new Bullet(
+                sprite.flipX ? centerX - sprite.x - 32: centerX - sprite.x + 32, centerY + (isCrouching ? 5 : 0),
                 {
-                    width: 8,
-                    height: 3,
+                    width: 64,
+                    height: 32,
+                    angle: shotAngle,
+                    speed: 0,
+                    shotByPlayer: true,
+                    collidesWithWalls: true,
+                    color: 0xADD8E6,
+                    duration: SHOT_COOLDOWN / 2,
+                    isSword: true
+                }
+            );
+            HXP.scene.add(sword);
+            attached.push(sword);
+            shotCooldown.start();
+            var bullets = [];
+            HXP.scene.getType("playerbullet", bullets);
+            if(bullets.length >= 3) {
+                return;
+            }
+            var bullet = new Bullet(
+                sprite.flipX ? centerX - sprite.x : centerX - sprite.x, centerY + (isCrouching ? 5 : 0),
+                {
+                    width: 16,
+                    height: 8,
                     angle: shotAngle,
                     speed: SHOT_SPEED,
                     shotByPlayer: true,
                     collidesWithWalls: true
                 }
             );
-            scene.add(bullet);
-            //sfx['playershot${HXP.choose(1, 2, 3)}'].play(HXP.choose(0.5, 0.7, 0.6));
-            shotCooldown.start();
+            HXP.scene.add(bullet);
         }
-        if(Input.check("action")) {
-            if(!sfx["shoot"].playing) {
-                sfx["shoot"].loop(0.25);
-            }
-        }
-        else {
-            sfx["shoot"].stop();
-        }
+        //if(Input.check("action")) {
+            //if(!sfx["shoot"].playing) {
+                //sfx["shoot"].loop(0.25);
+            //}
+        //}
+        //else {
+            //sfx["shoot"].stop();
+        //}
     }
 
     private function collisions() {

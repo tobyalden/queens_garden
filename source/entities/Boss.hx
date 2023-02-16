@@ -35,12 +35,12 @@ class Boss extends MiniEntity {
         active = false;
     }
 
-    public function takeHit() {
+    public function takeHit(damage:Int) {
         if(!active) {
             return;
         }
         sfx['bullethit${HXP.choose(1, 2, 3)}'].play();
-        health -= 1;
+        health -= damage;
         if(health <= startingHealth / 4) {
             if(!sfx["klaxon"].playing) {
                 if(!cast(scene.getInstance("player"), Player).isDead) {

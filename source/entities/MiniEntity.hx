@@ -11,9 +11,21 @@ class MiniEntity extends Entity
 {
     public static var solids = ["walls", "platform", "oneway"];
     public static var alwaysSolids = ["walls", "platform"];
+    public var attached:Array<MiniEntity>;
+    public var oldPosition:Vector2;
 
     public function new(x:Float, y:Float) {
         super(x, y);
+        attached = [];
+        oldPosition = new Vector2(x, y);
+    }
+
+    override public function update() {
+        for(e in attached) {
+            e.moveBy(x - oldPosition.x, y - oldPosition.y);
+        }
+        super.update();
+        oldPosition = new Vector2(x, y);
     }
 
     public function getScene() {

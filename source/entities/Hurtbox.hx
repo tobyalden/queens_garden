@@ -17,7 +17,6 @@ class Hurtbox extends MiniEntity
 
     public function new(x:Float, y:Float, width:Int, height:Int, delay:Float, duration:Float) {
         super(x, y);
-        trace('adding hitbox at ${x}, ${y}');
         type = "hazard";
         this.duration = duration + delay;
         this.delay = delay;

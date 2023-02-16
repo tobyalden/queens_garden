@@ -4,6 +4,7 @@ import entities.*;
 import haxepunk.*;
 import haxepunk.graphics.*;
 import haxepunk.graphics.tile.*;
+import haxepunk.graphics.hardware.*;
 import haxepunk.input.*;
 import haxepunk.masks.*;
 import haxepunk.math.*;
@@ -51,6 +52,8 @@ class GameScene extends Scene
         activeBosses = [];
         defeatedBossNames = Data.read("defeatedBossNames", "").split(",");
         defeatedBossNames.remove("");
+
+        addGraphic(new Backdrop(Texture.create(10, 10, false, 0x023020)), 10);
 
         curtain = add(new Curtain());
         curtain.fadeOut(1);

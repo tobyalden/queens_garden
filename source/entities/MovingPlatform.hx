@@ -14,7 +14,6 @@ class MovingPlatform extends MiniEntity
 {
     public static inline var SPEED = 200;
 
-    public var attached:Array<MiniEntity>;
     private var sprite:ColoredRect;
     private var path:LinearPath;
 
@@ -30,11 +29,9 @@ class MovingPlatform extends MiniEntity
         }
         path.setMotionSpeed(SPEED);
         addTween(path, true);
-        attached = [];
     }
 
     override public function update() {
-        var oldPosition = new Vector2(x, y);
         var player = cast(scene.getInstance("player"), Player);
 
         // Horizontal movement
@@ -69,10 +66,6 @@ class MovingPlatform extends MiniEntity
         }
         else if(player.collideWith(this, player.x, player.y) != null) {
             player.moveTo(player.x, bottom);
-        }
-
-        for(e in attached) {
-            e.moveBy(path.x - oldPosition.x, path.y - oldPosition.y);
         }
 
         super.update();
