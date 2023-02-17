@@ -57,7 +57,7 @@ class TestBossTwo extends Boss {
 
     private function attack() {
         var attackOption = attackOptions[attackIndex];
-        if(health <= startingHealth / 2 && !hasUsedSpecial) {
+        if(health <= startingHealth * 0.6 && !hasUsedSpecial) {
             special();
             hasUsedSpecial = true;
         }

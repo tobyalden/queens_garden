@@ -36,6 +36,11 @@ class Player extends MiniEntity
     public static inline var SHOT_DAMAGE = 2;
     public static inline var SWORD_DAMAGE = 3;
 
+    public static inline var SWORD_WIDTH = 64;
+    public static inline var SWORD_HEIGHT = 48;
+    public static inline var BULLET_WIDTH = 32;
+    public static inline var BULLET_HEIGHT = 16;
+
     public static inline var COYOTE_TIME = 1 / 60 * 5;
 
     public static inline var JETPACK_POWER = 4000;
@@ -145,17 +150,43 @@ class Player extends MiniEntity
                 //spreadAmount = 0;
             //}
             var shotAngle = (sprite.flipX ? -1 : 1) * Math.PI / 2 + (Math.random() - 0.5) * spreadAmount;
+            var swordData = new Rectangle(
+                sprite.flipX ? centerX - sprite.x - 32: centerX - sprite.x + 32,
+                centerY + (isCrouching ? 5 : 0),
+                SWORD_WIDTH, SWORD_HEIGHT
+            );
+            var bulletData = new Rectangle(
+                sprite.flipX ? centerX - sprite.x : centerX - sprite.x,
+                centerY + (isCrouching ? 5 : 0),
+                BULLET_WIDTH, BULLET_HEIGHT
+            );
             if(Input.check("up")) {
                 shotAngle = 0;
+                swordData.x = centerX - sprite.x;
+                swordData.y = top - 16;
+                swordData.width = SWORD_HEIGHT;
+                swordData.height = SWORD_WIDTH;
+                bulletData.x = centerX - sprite.x;
+                bulletData.y = top;
+                bulletData.width = BULLET_HEIGHT;
+                bulletData.height = BULLET_WIDTH;
             }
             else if(!isOnGround() && Input.check("down")) {
                 shotAngle = Math.PI;
+                swordData.x = centerX - sprite.x;
+                swordData.y = bottom + 16;
+                swordData.width = SWORD_HEIGHT;
+                swordData.height = SWORD_WIDTH;
+                bulletData.x = centerX - sprite.x;
+                bulletData.y = bottom;
+                bulletData.width = BULLET_HEIGHT;
+                bulletData.height = BULLET_WIDTH;
             }
             var sword = new Bullet(
-                sprite.flipX ? centerX - sprite.x - 32: centerX - sprite.x + 32, centerY + (isCrouching ? 5 : 0),
+                swordData.x, swordData.y,
                 {
-                    width: 64,
-                    height: 32,
+                    width: Std.int(swordData.width),
+                    height: Std.int(swordData.height),
                     angle: shotAngle,
                     speed: 0,
                     shotByPlayer: true,
@@ -174,10 +205,10 @@ class Player extends MiniEntity
                 return;
             }
             var bullet = new Bullet(
-                sprite.flipX ? centerX - sprite.x : centerX - sprite.x, centerY + (isCrouching ? 5 : 0),
+                bulletData.x, bulletData.y,
                 {
-                    width: 16,
-                    height: 8,
+                    width: Std.int(bulletData.width),
+                    height: Std.int(bulletData.height),
                     angle: shotAngle,
                     speed: SHOT_SPEED,
                     shotByPlayer: true,
