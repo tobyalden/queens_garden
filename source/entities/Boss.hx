@@ -11,6 +11,11 @@ import haxepunk.utils.*;
 import scenes.*;
 import entities.Bullet;
 
+typedef SequenceStep = {
+    var time:Float;
+    var action:Void->Void;
+}
+
 class Boss extends MiniEntity {
     public var health(default, null):Int;
     public var startingHealth(default, null):Int;
@@ -33,6 +38,15 @@ class Boss extends MiniEntity {
             ];
         }
         active = false;
+    }
+
+    private function doSequence(sequence:Array<SequenceStep>) {
+        var timeSum = 0.0;
+        for(step in sequence) {
+            timeSum += step.time;
+            HXP.alarm(timeSum, step.action, getScene().bossTweener);
+        }
+        return timeSum;
     }
 
     public function takeHit(damage:Int) {

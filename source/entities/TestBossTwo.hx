@@ -24,6 +24,7 @@ class TestBossTwo extends Boss {
     private var attackOptions:Array<String>;
     private var attackIndex:Int;
     private var hasUsedSpecial:Bool;
+    private var pauseBetweenAttacks:Float;
 
     public function new(x:Float, y:Float, pointNodes:Array<Vector2>) {
         super(x, y);
@@ -38,7 +39,6 @@ class TestBossTwo extends Boss {
         HXP.shuffle(pointNodes);
 
         attackOptions = ["move", "spell"];
-        //attackOptions = ["special"];
         HXP.shuffle(attackOptions);
         attackIndex = 0;
 
@@ -52,6 +52,7 @@ class TestBossTwo extends Boss {
         shotAngle = 0;
         shotPosition = new Vector2();
         hasUsedSpecial = false;
+        pauseBetweenAttacks = 1;
     }
 
     private function attack() {
@@ -60,7 +61,7 @@ class TestBossTwo extends Boss {
             special();
             hasUsedSpecial = true;
         }
-        if(attackOption == "move") {
+        else if(attackOption == "move") {
             move();
         }
         else if(attackOption == "spell") {
@@ -82,31 +83,76 @@ class TestBossTwo extends Boss {
         var pillarWidth = 30;
         var delayBetweenPillars = 0.4;
         var fromLeft = getPlayer().centerX > centerX;
-        HXP.alarm(travelTime + 1, function() {
-            HXP.scene.add(new Hurtbox(
-                HXP.scene.camera.x + 10, HXP.scene.camera.y,
-                70, GameScene.GAME_HEIGHT,
-                1, numPillars * delayBetweenPillars + 3
-            ));
-            HXP.scene.add(new Hurtbox(
-                HXP.scene.camera.x + GameScene.GAME_WIDTH - 70 - 10, HXP.scene.camera.y,
-                70, GameScene.GAME_HEIGHT,
-                1, numPillars * delayBetweenPillars + 3
-            ));
-            HXP.alarm(2, function() {
-                for(i in 0...numPillars) {
-                    var delay = fromLeft ? i * delayBetweenPillars : (numPillars - 1) * delayBetweenPillars - i * delayBetweenPillars;
-                    HXP.alarm(delay, function() {
-                        HXP.scene.add(new Hurtbox(
-                            HXP.scene.camera.x + GameScene.GAME_WIDTH / (numPillars + 1) * (i + 1) - pillarWidth / 2, HXP.scene.camera.y,
-                            pillarWidth, GameScene.GAME_HEIGHT,
-                            0.5, 0.5
-                        ));
-                    }, getScene().bossTweener);
+        var timeSum = doSequence([
+            {
+                time: travelTime + 1,
+                action: function() {
+                    HXP.scene.add(new Hurtbox(
+                        HXP.scene.camera.x + 10, HXP.scene.camera.y,
+                        70, GameScene.GAME_HEIGHT,
+                        1, (numPillars * delayBetweenPillars) * 2 + 4 + 1
+                    ));
+                    HXP.scene.add(new Hurtbox(
+                        HXP.scene.camera.x + GameScene.GAME_WIDTH - 70 - 10, HXP.scene.camera.y,
+                        70, GameScene.GAME_HEIGHT,
+                        1, (numPillars * delayBetweenPillars) * 2 + 4 + 1
+                    ));
                 }
-            }, getScene().bossTweener);
-        }, getScene().bossTweener);
-        attackPause.reset(travelTime + 1 + numPillars * delayBetweenPillars + 1 + 3);
+            },
+            {
+                time: 2,
+                action: function() {
+                    for(i in 0...numPillars) {
+                        var delay = (
+                            fromLeft
+                            ? i * delayBetweenPillars
+                            : (numPillars - 1) * delayBetweenPillars - i * delayBetweenPillars
+                        );
+                        HXP.alarm(delay, function() {
+                            HXP.scene.add(new Hurtbox(
+                                (
+                                    HXP.scene.camera.x + GameScene.GAME_WIDTH
+                                    / (numPillars + 1) * (i + 1)
+                                    - pillarWidth / 2
+                                ),
+                                HXP.scene.camera.y,
+                                pillarWidth, GameScene.GAME_HEIGHT,
+                                0.5, 0.5
+                            ));
+                        }, getScene().bossTweener);
+                    }
+                }
+            },
+            {
+                time: numPillars * delayBetweenPillars + 2,
+                action: function() {
+                    fromLeft = !fromLeft;
+                    for(i in 0...numPillars) {
+                        var delay = (
+                            fromLeft
+                            ? i * delayBetweenPillars
+                            : (numPillars - 1) * delayBetweenPillars - i * delayBetweenPillars
+                        );
+                        HXP.alarm(delay, function() {
+                            HXP.scene.add(new Hurtbox(
+                                (
+                                    HXP.scene.camera.x + GameScene.GAME_WIDTH
+                                    / (numPillars + 1) * (i + 1)
+                                    - pillarWidth / 2
+                                ),
+                                HXP.scene.camera.y,
+                                pillarWidth, GameScene.GAME_HEIGHT,
+                                0.5, 0.5
+                            ));
+                        }, getScene().bossTweener);
+                    }
+                }
+            },
+        ]);
+        timeSum += numPillars * delayBetweenPillars + 3;
+
+        attackPause.reset(timeSum);
+        pauseBetweenAttacks = 0.5;
     }
 
     private function spell() {
@@ -118,7 +164,11 @@ class TestBossTwo extends Boss {
             accel: 600,
             tracking: 600 * 2,
         });
-        attackPause.reset(0.7);
+        var resetTime = 0.7;
+        if(attackOptions[attackIndex] != "spell") {
+            resetTime += 1;
+        }
+        attackPause.reset(resetTime);
     }
 
     private function move() {
@@ -158,7 +208,7 @@ class TestBossTwo extends Boss {
 
     override function update() {
         if(!mover.active && !attackPause.active) {
-            attackPause.reset(0.3);
+            attackPause.reset(0.3 + 1);
         }
     }
 }
