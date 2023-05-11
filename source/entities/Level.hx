@@ -74,7 +74,10 @@ class Level extends Entity
                         entities.push(testBossThree.flail);
                     }
                     else if(entity.name == "guard") {
-                        entities.push(new Guard(entity.x, entity.y));
+                        entities.push(new Guard(entity.x, entity.y, getPointNodes(entity, entity.nodes)));
+                    }
+                    else if(entity.name == "spy") {
+                        entities.push(new Spy(entity.x, entity.y, getPointNodes(entity, entity.nodes)));
                     }
                     else if(entity.name == "movingPlatform") {
                         entities.push(new MovingPlatform(
