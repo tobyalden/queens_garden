@@ -58,12 +58,12 @@ class Spy extends Boss {
         var attackOption = attackOptions[attackIndex];
         if(attackOption == "homing") {
             for(i in 1...4) {
-                HXP.alarm(i * 0.1, function() {
+                HXP.alarm(i * 0.07, function() {
                     shoot({
                         radius: 8,
                         angle: getAngleTowardsPlayer(),
                         speed: 100,
-                        color: 0xFFF7AB,
+                        color: 0xC3B1E1,
                         accel: 300,
                         tracking: 900,
                     });
@@ -75,7 +75,7 @@ class Spy extends Boss {
                 radius: 16,
                 angle: Math.PI,
                 speed: 1,
-                color: 0xFFF7AB,
+                color: 0xfdfd96,
                 accel: 300,
                 callback: function(b:Bullet) {
                     var numBullets = 30;
@@ -85,8 +85,8 @@ class Spy extends Boss {
                         var bullet = new Bullet(b.centerX, b.centerY, {
                             radius: 8,
                             angle: i * Math.PI * 2 / numBullets,
-                            speed: 260,
-                            color: 0xFFF783,
+                            speed: 300,
+                            color: 0xff6961,
                             callback: function(b:Bullet) {
                                 HXP.scene.remove(b);
                             },

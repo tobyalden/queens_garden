@@ -12,7 +12,7 @@ import scenes.*;
 class Main extends Engine
 {
     static function main() {
-        new Main();
+        new Main(480, 360);
     }
 
     override public function init() {
