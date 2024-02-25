@@ -85,9 +85,10 @@ class TestBoss extends Boss {
                 }
             );
         }
-        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
+        attackIndex = increment(attackIndex, attackOptions.length);
+        if(attackIndex == 0) {
             HXP.shuffle(attackOptions);
-        });
+        }
     }
 
     override function update() {

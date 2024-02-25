@@ -70,9 +70,10 @@ class TestBossThree extends Boss {
         var destination = pointNodes[pointIndex];
         var travelTime = distanceToPoint(destination.x, destination.y) / 200;
         trace('about to shuffle');
-        pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
+        pointIndex = increment(pointIndex, pointNodes.length);
+        if(pointIndex == 0) {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-        });
+        };
         trace('finished shuffling');
         mover.tween(
             this,
@@ -104,11 +105,10 @@ class TestBossThree extends Boss {
             }
             move();
         }
-        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
-            trace('about to shuffle');
+        attackIndex = increment(attackIndex, attackOptions.length);
+        if(attackIndex == 0) {
             do { HXP.shuffle(attackOptions); } while (attackOptions[0] == attackOption);
-            trace('finished shuffling');
-        });
+        };
     }
 
     override function update() {

@@ -48,9 +48,10 @@ class Guard extends Boss {
         if(isFirstJump) {
             yVelocity *= 1.5;
             isFirstJump = false;
-            pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
+            pointIndex = increment(pointIndex, pointNodes.length);
+            if(pointIndex == 0) {
                 do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-            });
+            };
         }
         var testY = y;
         var testYVelocity = yVelocity;
@@ -61,9 +62,10 @@ class Guard extends Boss {
             totalTime += (1/60);
         }
         jumpXTween.tween(this, {x: destination.x}, totalTime);
-        pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
+        pointIndex = increment(pointIndex, pointNodes.length);
+        if(pointIndex == 0) {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-        });
+        };
     }
 
     override function update() {

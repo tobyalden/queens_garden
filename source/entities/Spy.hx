@@ -99,9 +99,10 @@ class Spy extends Boss {
                 callbackDelay: 1.35,
             });
         }
-        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
+        attackIndex = increment(attackIndex, attackOptions.length);
+        if(attackIndex == 0) {
             HXP.shuffle(attackOptions);
-        });
+        };
     }
 
     private function move() {
@@ -112,9 +113,10 @@ class Spy extends Boss {
             isFirstMove ? 1.5 : 3,
             Ease.sineInOut
         );
-        pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
+        pointIndex = increment(pointIndex, pointNodes.length);
+        if(pointIndex == 0) {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-        });
+        };
     }
 
     override function update() {

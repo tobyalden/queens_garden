@@ -40,6 +40,14 @@ class Boss extends MiniEntity {
         active = false;
     }
 
+    private function increment(index: Int, max:Int) {
+        index += 1;
+        if(index >= max) {
+            index = 0;
+        }
+        return index;
+    }
+
     private function doSequence(sequence:Array<SequenceStep>) {
         var timeSum = 0.0;
         for(step in sequence) {

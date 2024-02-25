@@ -67,9 +67,10 @@ class TestBossTwo extends Boss {
         else if(attackOption == "spell") {
             spell();
         }
-        attackIndex = MathUtil.increment(attackIndex, attackOptions.length, function() {
+        attackIndex = increment(attackIndex, attackOptions.length);
+        if(attackIndex == 0) {
             HXP.shuffle(attackOptions);
-        });
+        }
     }
 
     private function special() {
@@ -179,9 +180,10 @@ class TestBossTwo extends Boss {
             {"x": destination.x, "y": destination.y},
             travelTime
         );
-        pointIndex = MathUtil.increment(pointIndex, pointNodes.length, function() {
+        pointIndex = increment(pointIndex, pointNodes.length);
+        if(pointIndex == 0) {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
-        });
+        }
         var travelIncrements = [
             0, 0.025, 0.05, 0.075,
             0.1, 0.125, 0.15, 0.175,
