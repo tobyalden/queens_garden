@@ -113,7 +113,6 @@ class TestBossThree extends Boss {
         if(!mover.active && !fireStartup.active && !fireCooldown.active) {
             attack();
         }
-        age += HXP.elapsed;
         var flailDistance = new Vector2(0, -flailPulse.value);
         flailDistance.rotate(age * (flailClockwise ? -1 : 1));
         flail.moveTo(x + flailDistance.x, y + flailDistance.y);

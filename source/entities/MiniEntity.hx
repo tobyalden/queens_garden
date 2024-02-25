@@ -36,6 +36,16 @@ class MiniEntity extends Entity
         return cast(HXP.scene.getInstance("player"), Player);
     }
 
+    private function getAngleTowards(e:Entity) {
+       return Math.atan2(
+            getHeadingTowards(e).y, getHeadingTowards(e).x
+        ) + Math.PI / 2;
+    }
+
+    private function getHeadingTowards(e:Entity) {
+        return new Vector2(e.centerX - centerX, e.centerY - centerY);
+    }
+
     private function isOnGround() {
         return collideAny(MiniEntity.solids, x, y + 1) != null;
     }
