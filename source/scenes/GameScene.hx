@@ -18,6 +18,7 @@ class GameScene extends Scene
     public static inline var SAVE_FILE_NAME = "saveme";
     public static inline var GAME_WIDTH = 480;
     public static inline var GAME_HEIGHT = 360;
+    public static inline var DEBUG_MOVE_SPEED = 750;
 
     public static var totalTime:Float = 0;
     public static var deathCount:Float = 0;
@@ -155,19 +156,38 @@ class GameScene extends Scene
         }
 
         totalTime += HXP.elapsed;
-        if(Input.pressed("restart")) {
-            Data.clear(SAVE_FILE_NAME);
-            HXP.scene = new GameScene();
-            sfx["restart"].play();
-        }
-        if(Key.pressed(Key.P)) {
-            trace(activeBosses);
-        }
         super.update();
         camera.setTo(
             Math.floor(player.centerX / GAME_WIDTH) * GAME_WIDTH,
             Math.floor(player.bottom / GAME_HEIGHT) * GAME_HEIGHT,
             0, 0
         );
+        debug();
+    }
+
+    private function debug() {
+        if(Input.pressed("restart")) {
+            Data.clear(SAVE_FILE_NAME);
+            HXP.scene = new GameScene();
+            sfx["restart"].play();
+        }
+
+        player.active = !(Key.check(Key.DIGIT_0) || Key.check(Key.DIGIT_9));
+
+        // Debug movement (smooth)
+        if(Key.check(Key.DIGIT_9)) {
+            if(Key.check(Key.A)) {
+                player.x -= DEBUG_MOVE_SPEED * HXP.elapsed;
+            }
+            if(Key.check(Key.D)) {
+                player.x += DEBUG_MOVE_SPEED * HXP.elapsed;
+            }
+            if(Key.check(Key.W)) {
+                player.y -= DEBUG_MOVE_SPEED * HXP.elapsed;
+            }
+            if(Key.check(Key.S)) {
+                player.y += DEBUG_MOVE_SPEED * HXP.elapsed;
+            }
+        }
     }
 }

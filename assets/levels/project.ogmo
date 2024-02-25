@@ -1,6 +1,6 @@
 {
   "name": "New Project",
-  "ogmoVersion": "3.3.0",
+  "ogmoVersion": "3.4.0",
   "levelPaths": ["."],
   "backgroundColor": "#282c34ff",
   "gridColor": "#3c4049cc",
@@ -32,6 +32,14 @@
       "exportID": "50484361",
       "requiredTags": [],
       "excludedTags": []
+    },
+    {
+      "definition": "grid",
+      "name": "guide",
+      "gridSize": {"x": 480, "y": 360},
+      "exportID": "89796583",
+      "arrayMode": 0,
+      "legend": {"0": "#00000000", "1": "#4ea500ff"}
     }
   ],
   "entities": [
@@ -142,7 +150,7 @@
       "nodeGhost": true,
       "tags": [],
       "values": [
-        {"name": "bossNames", "definition": "String", "defaults": "", "maxLength": 0, "trimWhitespace": true}
+        {"name": "bossNames", "definition": "String", "display": 0, "defaults": "", "maxLength": 0, "trimWhitespace": true}
       ]
     },
     {
@@ -368,7 +376,7 @@
       "nodeGhost": true,
       "tags": [],
       "values": [
-        {"name": "text", "definition": "Text", "defaults": ""}
+        {"name": "text", "definition": "Text", "display": 0, "defaults": ""}
       ]
     },
     {
@@ -606,6 +614,42 @@
         ]
       },
       "color": "#00ff32ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 16, "y": 16},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": true,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    },
+    {
+      "exportID": "89814293",
+      "name": "bull",
+      "limit": -1,
+      "size": {"x": 50, "y": 50},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#00d6ffff",
       "tileX": false,
       "tileY": false,
       "tileSize": {"x": 16, "y": 16},

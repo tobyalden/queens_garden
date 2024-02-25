@@ -69,12 +69,10 @@ class TestBossThree extends Boss {
     private function move() {
         var destination = pointNodes[pointIndex];
         var travelTime = distanceToPoint(destination.x, destination.y) / 200;
-        trace('about to shuffle');
         pointIndex = increment(pointIndex, pointNodes.length);
         if(pointIndex == 0) {
             do { HXP.shuffle(pointNodes); } while (pointNodes[0] == destination);
         };
-        trace('finished shuffling');
         mover.tween(
             this,
             {"x": destination.x, "y": destination.y},

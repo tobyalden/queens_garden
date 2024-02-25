@@ -79,6 +79,9 @@ class Level extends Entity
                     else if(entity.name == "spy") {
                         entities.push(new Spy(entity.x, entity.y, getPointNodes(entity, entity.nodes)));
                     }
+                    else if(entity.name == "bull") {
+                        entities.push(new Bull(entity.x, entity.y));
+                    }
                     else if(entity.name == "movingPlatform") {
                         entities.push(new MovingPlatform(
                             entity.x, entity.y,
