@@ -12,6 +12,7 @@ import scenes.*;
 
 class Bull extends Boss {
     public static inline var CHARGE_COOLDOWN = 1;
+    public static inline var CHARGE_COOLDOWN_ENRAGE = 0.75;
     public static inline var CHARGE_SPEED = 300;
     public static inline var CHARGE_DECEL = 300;
 
@@ -25,6 +26,7 @@ class Bull extends Boss {
         name = "bull";
         health = 100;
         startingHealth = health;
+        enrageThreshold = 0.5;
         graphic = new Image("graphics/bull.png");
         mask = new Hitbox(50, 50);
         velocity = new Vector2();
@@ -76,7 +78,9 @@ class Bull extends Boss {
         dropMine();
         velocity = getHeadingTowards(getPlayer());
         velocity.normalize(CHARGE_SPEED);
-        chargeCooldown.start();
+        chargeCooldown.reset(
+            isEnraged ? CHARGE_COOLDOWN_ENRAGE : CHARGE_COOLDOWN
+        );
     }
 
     private function retreat() {
@@ -84,7 +88,9 @@ class Bull extends Boss {
         velocity = getHeadingTowards(getPlayer());
         velocity.normalize(CHARGE_SPEED);
         velocity.inverse();
-        chargeCooldown.start();
+        chargeCooldown.reset(
+            isEnraged ? CHARGE_COOLDOWN_ENRAGE : CHARGE_COOLDOWN
+        );
     }
 
     override function update() {

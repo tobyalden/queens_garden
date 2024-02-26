@@ -17,10 +17,15 @@ typedef SequenceStep = {
 }
 
 class Boss extends MiniEntity {
+    public static inline var DEFAULT_ENRAGE_THRESHOLD = 0.25;
+    public static inline var KLAXON_THRESHOLD = 0.25;
+
     public var health(default, null):Int;
     public var startingHealth(default, null):Int;
     private var sprite:Spritemap;
     private var age:Float;
+    private var isEnraged:Bool;
+    private var enrageThreshold:Float;
 
     public static var sfx:Map<String, Sfx> = null;
 
@@ -38,6 +43,8 @@ class Boss extends MiniEntity {
             ];
         }
         active = false;
+        isEnraged = false;
+        enrageThreshold = DEFAULT_ENRAGE_THRESHOLD;
     }
 
     private function increment(index: Int, max:Int) {
@@ -63,16 +70,23 @@ class Boss extends MiniEntity {
         }
         sfx['bullethit${HXP.choose(1, 2, 3)}'].play();
         health -= damage;
-        if(health <= startingHealth / 4) {
-            if(!sfx["klaxon"].playing) {
-                if(!cast(scene.getInstance("player"), Player).isDead) {
-                    sfx["klaxon"].loop(0.8);
-                }
+        if(health <= startingHealth * enrageThreshold) {
+            if(!isEnraged) {
+                triggerEnrage();
+            }
+        }
+        if(health <= startingHealth * KLAXON_THRESHOLD) {
+            if(!sfx["klaxon"].playing && !getPlayer().isDead) {
+                sfx["klaxon"].loop(0.8);
             }
         }
         if(health <= 0) {
             die();
         }
+    }
+
+    private function triggerEnrage() {
+        isEnraged = true;
     }
 
     private function die() {
@@ -108,7 +122,8 @@ class Boss extends MiniEntity {
 
     public override function update() {
         age += HXP.elapsed;
-        if(health <= startingHealth / 4) {
+        if(health <= startingHealth * KLAXON_THRESHOLD) {
+            graphic.color = 0xFF0000;
             graphic.x = Math.random() * 3;
             graphic.y = Math.random() * 3;
         }
