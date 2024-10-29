@@ -82,6 +82,9 @@ class Level extends Entity
                     else if(entity.name == "bull") {
                         entities.push(new Bull(entity.x, entity.y));
                     }
+                    else if(entity.name == "finalBoss") {
+                        entities.push(new FinalBoss(entity.x, entity.y));
+                    }
                     else if(entity.name == "movingPlatform") {
                         entities.push(new MovingPlatform(
                             entity.x, entity.y,
