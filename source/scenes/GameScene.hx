@@ -159,7 +159,7 @@ class GameScene extends Scene
         super.update();
         var screenX = Math.floor(player.centerX / GAME_WIDTH);
         var screenY = Math.floor(player.centerY / GAME_HEIGHT);
-        if(isScreenFar()) {
+        if(isCameraFar()) {
             screenX = Math.floor(screenX / 2) * 2;
             screenY = Math.floor(screenY / 2) * 2;
             camera.setTo(screenX * GAME_WIDTH, screenY * GAME_HEIGHT, 0, 0);
@@ -174,7 +174,7 @@ class GameScene extends Scene
         debug();
     }
 
-    public function isScreenFar() {
+    public function isCameraFar() {
         var screenX = Math.floor(player.centerX / GAME_WIDTH);
         var screenY = Math.floor(player.centerY / GAME_HEIGHT);
         return level.cameraFar.getTile(screenX, screenY);

@@ -25,14 +25,14 @@ class BossTrigger extends MiniEntity
     }
 
     override public function update() {
-        if(collide("player", x, y) != null) {
-            scene.remove(this);
-            var gameScene = cast(HXP.scene, GameScene);
-            var bossCheckpoint = new Vector2(x + width / 2 - 6, bottom - 48);
-            for(bossName in bossNames) {
-                gameScene.triggerBoss(bossName, bossCheckpoint);
-            }
-        }
         super.update();
+    }
+
+    public function trigger() {
+        HXP.scene.remove(this);
+        var bossCheckpoint = new Vector2(x + width / 2 - 6, bottom - 48);
+        for(bossName in bossNames) {
+            getScene().triggerBoss(bossName, bossCheckpoint);
+        }
     }
 }

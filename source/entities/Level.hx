@@ -121,7 +121,6 @@ class Level extends Entity
                         cameraFar.setTile(tileX, tileY, layer.grid2D[tileY][tileX] == "1");
                     }
                 }
-                trace(cameraFar.saveToString());
             }
         }
     }

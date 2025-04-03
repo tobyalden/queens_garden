@@ -260,6 +260,10 @@ class Player extends MiniEntity
                 die();
             }
         }
+        var bossTrigger = collide("bosstrigger", x, y);
+        if(bossTrigger != null) {
+            cast(bossTrigger, BossTrigger).trigger();
+        }
     }
 
     private function stopSounds() {

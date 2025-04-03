@@ -88,7 +88,7 @@ class UI extends MiniEntity {
                         i * GameScene.GAME_WIDTH / initialNumberOfBosses + (8 / initialNumberOfBosses)
                     );
                     healthBarLabels[i].x = healthBars[i].x + 12 / initialNumberOfBosses;
-                    var screenScale = gameScene.isScreenFar() ? 2 : 1;
+                    var screenScale = gameScene.isCameraFar() ? 2 : 1;
                     healthBars[i].y = GameScene.GAME_HEIGHT * screenScale - healthBars[i].height * screenScale - 6 * screenScale;
                     healthBarLabels[i].y = healthBars[i].y - 10 * screenScale;
                 }
@@ -107,7 +107,7 @@ class UI extends MiniEntity {
             initialNumberOfBosses = 0;
         }
 
-        if(gameScene.isScreenFar()) {
+        if(gameScene.isCameraFar()) {
             for(sprite in allSprites.children) {
                 cast(sprite, Image).scale = 2;
             }

@@ -14,7 +14,7 @@ class Curtain extends MiniEntity
 
     public function new() {
         super(0, 0);
-        sprite = new ColoredRect(HXP.width, HXP.height, 0x000000);
+        sprite = new ColoredRect(HXP.width * 2, HXP.height * 2, 0x000000);
         graphic = sprite;
         layer = -999;
         fader = new VarTween();

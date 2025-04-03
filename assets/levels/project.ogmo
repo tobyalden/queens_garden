@@ -54,7 +54,7 @@
     {
       "exportID": "50484463",
       "name": "player",
-      "limit": -1,
+      "limit": 1,
       "size": {"x": 20, "y": 40},
       "origin": {"x": 0, "y": 0},
       "originAnchored": true,
