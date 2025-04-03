@@ -157,12 +157,27 @@ class GameScene extends Scene
 
         totalTime += HXP.elapsed;
         super.update();
-        camera.setTo(
-            Math.floor(player.centerX / GAME_WIDTH) * GAME_WIDTH,
-            Math.floor(player.bottom / GAME_HEIGHT) * GAME_HEIGHT,
-            0, 0
-        );
+        var screenX = Math.floor(player.centerX / GAME_WIDTH);
+        var screenY = Math.floor(player.centerY / GAME_HEIGHT);
+        if(isScreenFar()) {
+            screenX = Math.floor(screenX / 2) * 2;
+            screenY = Math.floor(screenY / 2) * 2;
+            camera.setTo(screenX * GAME_WIDTH, screenY * GAME_HEIGHT, 0, 0);
+            camera.scaleX = 0.5;
+            camera.scaleY = 0.5;
+        }
+        else {
+            camera.setTo(screenX * GAME_WIDTH, screenY * GAME_HEIGHT, 0, 0);
+            camera.scaleX = 1;
+            camera.scaleY = 1;
+        }
         debug();
+    }
+
+    public function isScreenFar() {
+        var screenX = Math.floor(player.centerX / GAME_WIDTH);
+        var screenY = Math.floor(player.centerY / GAME_HEIGHT);
+        return level.cameraFar.getTile(screenX, screenY);
     }
 
     private function debug() {

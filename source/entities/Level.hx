@@ -14,6 +14,7 @@ class Level extends Entity
     public var walls(default, null):Grid;
     private var tiles:Tilemap;
     public var entities(default, null):Array<MiniEntity>;
+    public var cameraFar(default, null):Grid;
 
     public function new(levelName:String) {
         super(0, 0);
@@ -111,6 +112,16 @@ class Level extends Entity
                         entities.push(new Tutorial(entity.x, entity.y, entity.values.text));
                     }
                 }
+            }
+            else if(layer.name == "camera_far") {
+                // Load solid geometry
+                cameraFar = new Grid(levelData.width, levelData.height, layer.gridCellWidth, layer.gridCellHeight);
+                for(tileY in 0...layer.grid2D.length) {
+                    for(tileX in 0...layer.grid2D[0].length) {
+                        cameraFar.setTile(tileX, tileY, layer.grid2D[tileY][tileX] == "1");
+                    }
+                }
+                trace(cameraFar.saveToString());
             }
         }
     }

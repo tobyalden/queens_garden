@@ -17,37 +17,18 @@ class UI extends MiniEntity {
     private var healthBarLabels:Array<Text>;
     private var retryPrompt:Text;
     private var initialNumberOfBosses:Int;
-    private var fuelPods:Graphiclist;
-    private var fuel:Image;
 
     public function new() {
         super(0, 0);
         layer = -100;
         allSprites = new Graphiclist();
 
-        fuelPods = new Graphiclist([]);
-        for(i in 0...10) {
-            var fuelPod = new Image("graphics/fuelpod.png");
-            fuelPods.add(fuelPod);
-            fuelPod.x = i * (fuelPod.width + 2);
-        }
-        fuelPods.x = 20;
-        fuelPods.y = 20;
-        allSprites.add(fuelPods);
-
-        fuel = new Image("graphics/fuel.png");
-        fuel.x = fuelPods.x;
-        fuel.y = fuelPods.y + cast(fuelPods.get(0), Image).height + 6;
-        allSprites.add(fuel);
-
         healthBars = [];
         healthBarLabels = [];
         for(i in 0...MAX_NUMBER_OF_BOSSES) {
             var healthBar = new Image("graphics/bosshealth.png");
-            healthBar.y = GameScene.GAME_HEIGHT - healthBar.height - 6;
 
             var healthBarLabel = new Text('BOSS #${i}');
-            healthBarLabel.y = healthBar.y - 10;
 
             healthBars.push(healthBar);
             allSprites.add(healthBar);
@@ -58,7 +39,6 @@ class UI extends MiniEntity {
 
         allSprites.scrollX = 0;
         allSprites.scrollY = 0;
-
         retryPrompt = new Text(
             "",
             GameScene.GAME_WIDTH / 2,
@@ -83,10 +63,6 @@ class UI extends MiniEntity {
 
     public override function update() {
         var player = cast(HXP.scene.getInstance("player"), Player);
-        for(i in 0...fuelPods.count) {
-            fuelPods.get(i).visible = i < player.fuelPods;
-        }
-        fuel.scaleX = player.fuel / 100;
 
         var gameScene = cast(HXP.scene, GameScene);
         if(!gameScene.isRetrying) {
@@ -112,6 +88,9 @@ class UI extends MiniEntity {
                         i * GameScene.GAME_WIDTH / initialNumberOfBosses + (8 / initialNumberOfBosses)
                     );
                     healthBarLabels[i].x = healthBars[i].x + 12 / initialNumberOfBosses;
+                    var screenScale = gameScene.isScreenFar() ? 2 : 1;
+                    healthBars[i].y = GameScene.GAME_HEIGHT * screenScale - healthBars[i].height * screenScale - 6 * screenScale;
+                    healthBarLabels[i].y = healthBars[i].y - 10 * screenScale;
                 }
             }
             for(i in 0...activeBosses.length) {
@@ -126,6 +105,23 @@ class UI extends MiniEntity {
         }
         else {
             initialNumberOfBosses = 0;
+        }
+
+        if(gameScene.isScreenFar()) {
+            for(sprite in allSprites.children) {
+                cast(sprite, Image).scale = 2;
+            }
+            retryPrompt.resize(GameScene.GAME_WIDTH * 2, retryPrompt.height);
+            retryPrompt.x = GameScene.GAME_WIDTH;
+            retryPrompt.y = GameScene.GAME_HEIGHT;
+        }
+        else {
+            for(sprite in allSprites.children) {
+                cast(sprite, Image).scale = 1;
+            }
+            retryPrompt.resize(GameScene.GAME_WIDTH, retryPrompt.height);
+            retryPrompt.x = GameScene.GAME_WIDTH / 2;
+            retryPrompt.y = GameScene.GAME_HEIGHT / 2;
         }
         super.update();
     }
