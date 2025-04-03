@@ -132,8 +132,9 @@ class Bullet extends MiniEntity
                 scene.remove(this);
             }
         }
+        var screenScale = getScene().scene, GameScene).isScreenFar() ? 2 : 1;
         if(!collideRect(
-            x, y, scene.camera.x, scene.camera.y, HXP.width, HXP.height)
+            x, y, scene.camera.x, scene.camera.y, GameScene.GAME_WIDTH * screenScale, GameScene.GAME_HEIGHT * screenScale)
         ) {
             scene.remove(this);
         }
