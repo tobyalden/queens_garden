@@ -396,7 +396,6 @@
           "values": {"bossNames": "bull"}
         },
         {"name": "checkpoint", "id": 51, "_eid": "50618230", "x": 1340, "y": 1390, "originX": 0, "originY": 0},
-        {"name": "player", "id": 52, "_eid": "50484463", "x": 1670, "y": 660, "originX": 0, "originY": 0},
         {"name": "checkpoint", "id": 53, "_eid": "50618230", "x": 2340, "y": 620, "originX": 0, "originY": 0},
         {"name": "lock", "id": 54, "_eid": "50642670", "x": 1920, "y": 0, "width": 20, "height": 660, "originX": 0, "originY": 0},
         {"name": "finalBoss", "id": 55, "_eid": "16890077", "x": 2350, "y": 310, "originX": 0, "originY": 0},
@@ -446,7 +445,8 @@
             {"x": 1280, "y": 120},
             {"x": 1680, "y": 120}
           ]
-        }
+        },
+        {"name": "player", "id": 80, "_eid": "50484463", "x": 200, "y": 1380, "originX": 0, "originY": 0}
       ]
     },
     {

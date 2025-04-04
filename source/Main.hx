@@ -12,7 +12,8 @@ import scenes.*;
 class Main extends Engine
 {
     static function main() {
-        new Main(480, 360);
+        //new Main(480, 360);
+        new Main();
     }
 
     override public function init() {
@@ -58,6 +59,9 @@ class Main extends Engine
 #if desktop
         if(Key.pressed(Key.ESCAPE)) {
             Sys.exit(0);
+        }
+        if(Key.pressed(Key.F)) {
+            HXP.fullscreen = !HXP.fullscreen;
         }
 #end
         super.update();

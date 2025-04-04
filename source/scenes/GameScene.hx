@@ -33,7 +33,7 @@ class GameScene extends Scene
     public var bossTweener(default, null):Entity;
     private var level:Level;
     private var player:Player;
-    private var ui:UI;
+    //private var ui:UI;
     private var canRetry:Bool;
 
     public function saveGame(checkpoint:Checkpoint) {
@@ -62,7 +62,7 @@ class GameScene extends Scene
         activeBosses = [];
         bossTweener = add(new Entity());
 
-        ui = add(new UI());
+        //ui = add(new UI());
         canRetry = false;
         isRetrying = false;
 
@@ -126,7 +126,7 @@ class GameScene extends Scene
         Data.load(SAVE_FILE_NAME);
         GameScene.deathCount++;
         HXP.alarm(1, function() {
-            ui.showRetryPrompt();
+            //ui.showRetryPrompt();
             sfx["retryprompt"].play();
             canRetry = true;
         });
